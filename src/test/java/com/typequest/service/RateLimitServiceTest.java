@@ -160,4 +160,15 @@ class RateLimitServiceTest {
         // The original window is still active and its limit remains exhausted.
         assertFalse(rateLimitService.isAllowed(key));
     }
+
+    @Test
+    void customLimitAllowsThatManyAttempts() {
+        String key = "classroom";
+
+        for (int i = 0; i < 20; i++) {
+            assertTrue(rateLimitService.isAllowed(key, 20));
+        }
+
+        assertFalse(rateLimitService.isAllowed(key, 20));
+    }
 }

@@ -51,7 +51,8 @@ public class UserController {
                 user.getLevel(),
                 gamesPlayed,
                 achievementsUnlocked,
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.isEmailVerified()
         );
     }
 }

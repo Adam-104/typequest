@@ -27,7 +27,9 @@ public class PasswordResetController {
             String token,
 
             @jakarta.validation.constraints.NotBlank
-            @jakarta.validation.constraints.Size(min = 12, max = 128)
+            @jakarta.validation.constraints.Size(
+                    min = 12, max = 72,
+                    message = "Password must be 12–72 characters.")
             String newPassword
     ) {}
 

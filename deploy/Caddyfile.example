@@ -1,0 +1,14 @@
+# HTTPS for the Docker setup, with free automatic certificates (Caddy).
+# Replace the two domains, point their DNS A records at your server, then:
+#   sudo apt install caddy   # and put this file at /etc/caddy/Caddyfile
+
+app.example.com {
+	encode gzip
+	reverse_proxy 127.0.0.1:8081
+}
+
+api.example.com {
+	encode gzip
+	# Caddy adds X-Forwarded-For, so TYPEQUEST_TRUSTED_PROXY_HOPS=1.
+	reverse_proxy 127.0.0.1:8080
+}

@@ -1,0 +1,383 @@
+/* Layout for the three word-arena games (Word Survival, Space Mission,
+   Ninja Word Strike). Colours and key styles come from keycap.css. */
+
+.kc-page {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 0.9rem;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 1rem clamp(1rem, 3vw, 2rem) 1.2rem;
+    background: radial-gradient(120% 90% at 50% 0%, var(--kc-bg) 0%, var(--kc-bg-2) 100%);
+}
+
+.kc-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.kc-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+}
+
+.kc-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: auto;
+}
+
+.kc-best {
+    color: var(--kc-muted);
+    font-size: 0.9rem;
+}
+
+.kc-best strong {
+    margin-left: 0.3em;
+    color: var(--kc-text);
+    font-family: var(--kc-font-key);
+}
+
+/* Status row ------------------------------------------------------------- */
+
+.kc-console {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.8rem;
+}
+
+.kc-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-height: 4.6rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--kc-line);
+    border-radius: 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.kc-stat-label,
+.kc-stat-note {
+    color: var(--kc-muted);
+    font-size: 0.82rem;
+}
+
+.kc-stat-value {
+    font-family: var(--kc-font-key);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.kc-stat-value[data-urgent='true'] {
+    color: var(--kc-danger);
+}
+
+.kc-stat-value[data-chain='true'] {
+    color: var(--kc-accent);
+}
+
+.kc-lives {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.15rem;
+}
+
+.kc-meter {
+    height: 0.4rem;
+    margin-top: auto;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.kc-meter-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--kc-accent);
+    transition: width 120ms linear;
+}
+
+.kc-meter[data-level='mid'] .kc-meter-fill {
+    background: #ffb84d;
+}
+
+.kc-meter[data-level='low'] .kc-meter-fill {
+    background: var(--kc-danger);
+}
+
+/* Play area -------------------------------------------------------------- */
+
+.kc-field {
+    --kc-size: clamp(1.9rem, 2.7vw, 2.6rem);
+
+    position: relative;
+    min-height: 22rem;
+    border: 1px solid var(--kc-line);
+    border-radius: 1.1rem;
+    /* Faint grid of key slots, like looking down at a bare keyboard plate. */
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 100% 3.4rem,
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 3.4rem 100%,
+        rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+}
+
+.kc-word {
+    position: absolute;
+    display: flex;
+    gap: 0.2rem;
+    transform: translate(-50%, -50%);
+    transition: top 60ms linear, left 60ms linear, opacity 120ms;
+    will-change: top, left;
+}
+
+.kc-word.is-dim {
+    opacity: 0.4;
+}
+
+.kc-word.is-target {
+    filter: drop-shadow(0 0 0.7rem var(--kc-accent));
+}
+
+/* Close to the edge: legends turn to the danger colour. */
+.kc-word.is-near .kc-key:not(.is-typed) {
+    color: var(--kc-danger);
+}
+
+/* The edge words must not cross: a big key along the bottom or right. */
+.kc-edge {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: var(--kc-cap);
+    box-shadow:
+        inset 0 0.08em 0 rgba(255, 255, 255, 0.6),
+        0 0.25rem 0 var(--kc-cap-side),
+        0 0.6rem 1rem rgba(0, 0, 0, 0.45);
+    color: var(--kc-legend);
+    font-family: var(--kc-font-key);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.kc-field--y .kc-edge {
+    bottom: 0.9rem;
+    left: 50%;
+    width: min(60%, 28rem);
+    height: 2.4rem;
+    transform: translateX(-50%);
+}
+
+.kc-field--x .kc-edge {
+    top: 50%;
+    right: 0.9rem;
+    width: 4.6rem;
+    height: 55%;
+    transform: translateY(-50%);
+    background: var(--kc-accent);
+    box-shadow:
+        inset 0 0.08em 0 rgba(255, 255, 255, 0.35),
+        0 0.25rem 0 var(--kc-accent-side),
+        0 0.6rem 1rem rgba(0, 0, 0, 0.45);
+    color: var(--kc-accent-ink);
+}
+
+/* Feedback --------------------------------------------------------------- */
+
+.kc-pop {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    color: var(--kc-accent);
+    font-family: var(--kc-font-key);
+    font-size: 1.2rem;
+    font-weight: 700;
+    pointer-events: none;
+    animation: kc-rise 700ms ease-out forwards;
+}
+
+@keyframes kc-rise {
+    from { opacity: 1; margin-top: 0; }
+    to { opacity: 0; margin-top: -2.4rem; }
+}
+
+.kc-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(90% 60% at 50% 100%, var(--kc-danger), transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    animation: kc-flash 420ms ease-out;
+}
+
+.kc-field--x .kc-flash {
+    background: radial-gradient(60% 90% at 100% 50%, var(--kc-danger), transparent 70%);
+}
+
+@keyframes kc-flash {
+    from { opacity: 0.5; }
+    to { opacity: 0; }
+}
+
+/* Overlays (start, pause, results) -------------------------------------- */
+
+.kc-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(6, 8, 14, 0.72);
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+}
+
+.kc-rules {
+    margin: 1.2rem 0 0;
+    padding-left: 1.2rem;
+    color: var(--kc-text);
+    line-height: 1.6;
+}
+
+.kc-rules li::marker {
+    color: var(--kc-accent);
+}
+
+.kc-card-score {
+    margin: 0.8rem 0 0;
+    color: var(--kc-muted);
+}
+
+.kc-card-score strong {
+    color: var(--kc-text);
+    font-family: var(--kc-font-key);
+    font-size: 2.2rem;
+}
+
+.kc-results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin: 1.3rem 0 0;
+}
+
+/* Three results sit in one row; four make a 2x2 grid. */
+.kc-results:has(> :nth-child(3):last-child) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.kc-results div {
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--kc-line);
+    border-radius: 0.7rem;
+}
+
+.kc-results dt {
+    color: var(--kc-muted);
+    font-size: 0.82rem;
+}
+
+.kc-results dd {
+    margin: 0.2rem 0 0;
+    font-family: var(--kc-font-key);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.kc-card .reward-banner {
+    max-width: none;
+    margin: 1.2rem 0 0;
+}
+
+/* Typing box ------------------------------------------------------------- */
+
+.kc-inputbar {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+}
+
+.kc-input {
+    width: min(100%, 34rem);
+    padding: 0.85rem 1.1rem;
+    border: 2px solid var(--kc-line);
+    border-radius: 0.8rem;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--kc-text);
+    font: 600 1.4rem/1.2 var(--kc-font-key);
+    text-align: center;
+}
+
+.kc-input::placeholder {
+    color: var(--kc-muted);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.kc-input[data-invalid='true'] {
+    border-color: var(--kc-danger);
+}
+
+.kc-input:disabled {
+    opacity: 0.55;
+}
+
+.kc-hint {
+    margin: 0;
+    color: var(--kc-muted);
+    font-size: 0.88rem;
+}
+
+/* Small screens ---------------------------------------------------------- */
+
+@media (max-width: 640px) {
+    .kc-field {
+        --kc-size: clamp(1.3rem, 5.2vw, 1.7rem);
+    }
+
+    .kc-topbar kbd {
+        display: none;
+    }
+
+    .kc-topbar {
+        flex-wrap: wrap;
+    }
+
+    .kc-title {
+        order: -1;
+        width: 100%;
+    }
+
+    .kc-card {
+        padding: 1.4rem;
+    }
+
+    .kc-field--x .kc-edge {
+        width: 3rem;
+    }
+
+    .kc-field {
+        min-height: 18rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kc-pop,
+    .kc-flash {
+        animation: none;
+    }
+
+    .kc-word,
+    .kc-key,
+    .kc-btn,
+    .kc-meter-fill {
+        transition: none;
+    }
+}

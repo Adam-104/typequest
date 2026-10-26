@@ -1,0 +1,428 @@
+/* Admin pages (paper theme). Builds on Pages.css and App.css. */
+
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--rule-strong);
+}
+
+/* Index tabs sticking out of a folder. */
+.admin-tab {
+    position: relative;
+    top: 1px;
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    color: var(--ink-soft);
+    font-weight: 600;
+}
+
+.admin-tab:hover {
+    background: rgba(var(--ink-rgb), 0.06);
+}
+
+.admin-tab.active {
+    border-color: var(--rule-strong);
+    background: var(--sheet);
+    color: var(--ink);
+    font-weight: 700;
+    box-shadow: inset 0 3px 0 var(--ribbon);
+}
+
+.admin-two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 18px;
+}
+
+.admin-two-col .page-card {
+    margin-top: 18px;
+}
+
+.admin-bars {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.admin-bars li {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr) 3rem;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.admin-bars strong {
+    font-family: var(--font-type);
+    text-align: right;
+}
+
+.admin-bar {
+    height: 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 2px;
+    background: var(--sheet-2);
+    overflow: hidden;
+}
+
+.admin-bar i {
+    display: block;
+    height: 100%;
+    background: var(--ribbon);
+}
+
+.admin-compact th,
+.admin-compact td {
+    padding: 10px 8px;
+    font-size: 14px;
+}
+
+.admin-compact {
+    min-width: 0;
+}
+
+/* Tables */
+.admin-table {
+    min-width: 760px;
+}
+
+.admin-table td {
+    vertical-align: top;
+}
+
+.admin-table tr.is-off td {
+    opacity: 0.6;
+}
+
+.admin-sub {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.admin-flag {
+    color: var(--ribbon);
+    font-weight: 700;
+}
+
+.admin-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.admin-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background: var(--sheet-2);
+    color: var(--ink-soft);
+    font-family: var(--font-type);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.admin-tag.is-admin {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.admin-tag.is-bad {
+    border-color: var(--ribbon);
+    background: var(--ribbon-wash);
+    color: var(--ribbon-deep);
+}
+
+.admin-tag.is-warn {
+    border-color: var(--amber);
+    color: var(--amber);
+}
+
+/* Small key-style buttons */
+.admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-actions button,
+.admin-pager button,
+.admin-form button {
+    padding: 6px 11px;
+    border: 1.5px solid var(--ink);
+    border-radius: 5px;
+    background: var(--sheet);
+    box-shadow: 0 2px 0 var(--hard);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.admin-actions button:hover:not(:disabled),
+.admin-pager button:hover:not(:disabled),
+.admin-form button:hover:not(:disabled) {
+    background: var(--lift);
+}
+
+.admin-actions button:active:not(:disabled),
+.admin-pager button:active:not(:disabled),
+.admin-form button:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 var(--hard);
+}
+
+.admin-actions .is-danger {
+    border-color: var(--ribbon);
+    box-shadow: 0 2px 0 var(--ribbon);
+    color: var(--ribbon);
+}
+
+.admin-actions .admin-primary,
+.admin-form .admin-primary {
+    background: var(--ink);
+    color: var(--sheet);
+}
+
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.admin-search {
+    flex: 1 1 18rem;
+    max-width: 28rem;
+}
+
+.admin-search input,
+.admin-form input,
+.admin-form select,
+.admin-form textarea,
+.admin-list textarea,
+.admin-achievement input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+}
+
+.admin-form textarea,
+.admin-list textarea {
+    font-family: var(--font-type);
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.admin-search input:focus,
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus,
+.admin-list textarea:focus,
+.admin-achievement input:focus {
+    outline: none;
+    background: var(--lift);
+    box-shadow: 3px 3px 0 var(--ribbon);
+}
+
+.admin-count {
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 14px;
+}
+
+.admin-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.admin-message,
+.admin-inline {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-left: 4px solid var(--green);
+    background: var(--wash-green);
+    color: var(--wash-green-ink);
+    font-size: 14px;
+}
+
+.admin-message.is-error,
+.admin-inline.is-error {
+    border-color: var(--ribbon);
+    background: var(--ribbon-wash);
+    color: var(--ribbon-deep);
+}
+
+.admin-inline {
+    margin: 0;
+    padding: 4px 8px;
+}
+
+.admin-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 18px;
+    font-family: var(--font-type);
+    font-size: 14px;
+}
+
+.admin-lead {
+    margin: -6px 0 18px;
+    max-width: 46rem;
+}
+
+/* Forms */
+.admin-form {
+    display: grid;
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 16px;
+    border: 1px dashed var(--rule-strong);
+    border-radius: 3px;
+    background: var(--sheet-2);
+}
+
+.admin-form label,
+.admin-achievement label {
+    display: grid;
+    gap: 6px;
+}
+
+.admin-form label > span,
+.admin-achievement label > span {
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    grid-column: 1 / -1;
+}
+
+.admin-form-wide {
+    min-width: 0;
+}
+
+.admin-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.admin-list > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--sheet-2);
+}
+
+.admin-list > li.is-off {
+    opacity: 0.6;
+}
+
+.admin-list-main {
+    display: grid;
+    flex: 1 1 22rem;
+    gap: 8px;
+    min-width: 0;
+    justify-items: start;
+}
+
+.admin-list-main p {
+    margin: 0;
+    font-family: var(--font-type);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.admin-list-main textarea {
+    width: 100%;
+}
+
+.admin-achievement {
+    display: grid;
+    grid-template-columns: 5rem minmax(10rem, 14rem) minmax(0, 1fr) 7rem;
+    align-items: end;
+    gap: 12px;
+    width: 100%;
+}
+
+.admin-achievement .admin-actions {
+    grid-column: 1 / -1;
+}
+
+.admin-list > li:has(.admin-achievement) {
+    display: block;
+}
+
+@media (max-width: 1100px) {
+    .admin-two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .admin-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-achievement {
+        grid-template-columns: 4.5rem minmax(0, 1fr);
+    }
+
+    .admin-achievement .admin-form-wide {
+        grid-column: 1 / -1;
+    }
+
+    .admin-bars li {
+        grid-template-columns: 7rem minmax(0, 1fr) 2.5rem;
+    }
+}
+
+/* Wide tables scroll inside their card instead of widening the page. */
+.dashboard,
+.page-card {
+    min-width: 0;
+}
+
+/* position: so visually hidden labels inside cannot widen the page */
+.table-scroll {
+    position: relative;
+    max-width: 100%;
+}

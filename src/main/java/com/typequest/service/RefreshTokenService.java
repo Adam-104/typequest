@@ -160,6 +160,17 @@ public class RefreshTokenService {
                 });
     }
 
+    // Signs the user out on every device except the one holding keepRawToken
+    // (used after a password change). A missing or unknown token keeps nothing.
+    @Transactional
+    public void revokeAllExcept(Long userId, String keepRawToken) {
+        String keepHash = (keepRawToken == null || keepRawToken.isBlank())
+                ? "-"
+                : hashToken(keepRawToken);
+
+        refreshTokenRepository.revokeAllForUserExcept(userId, keepHash);
+    }
+
     private String hashToken(String rawToken) {
         try {
             MessageDigest digest =
@@ -194,6 +205,12 @@ public class RefreshTokenService {
                         ));
 
         User user = storedToken.getUser();
+
+        if (user.isDisabled()) {
+            throw new IllegalArgumentException(
+                    "This account has been disabled."
+            );
+        }
 
         // Access the user's fields while the transaction is active.
         Long userId = user.getId();

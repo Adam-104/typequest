@@ -10,6 +10,12 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(
                         name = "uk_users_email",
                         columnNames = "email"
+                ),
+                // MySQL's default collation ignores case, so this also
+                // stops "Ace" and "ace" from both existing.
+                @UniqueConstraint(
+                        name = "uk_users_username",
+                        columnNames = "username"
                 )
         }
 )
@@ -43,6 +49,21 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.ROLE_USER;
+
+    // Set by an admin to block sign-in. Stored as "disabled" (not "enabled")
+    // so the value Hibernate gives existing rows when it adds the column
+    // (false) leaves every current account active.
+    @Column(nullable = false)
+    private boolean disabled = false;
+
+    // Set by an admin to hide a player from the public leaderboard.
+    @Column(name = "leaderboard_banned", nullable = false)
+    private boolean leaderboardBanned = false;
+
+    // True once the player has clicked the link emailed to them. Not required
+    // to play; the app just reminds unverified players.
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
 
     // Failed login attempts
     @Column(name = "failed_login_attempts", nullable = false)
@@ -130,6 +151,30 @@ public class User {
 
     public void setLockedUntil(LocalDateTime lockedUntil) {
         this.lockedUntil = lockedUntil;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public boolean isLeaderboardBanned() {
+        return leaderboardBanned;
+    }
+
+    public void setLeaderboardBanned(boolean leaderboardBanned) {
+        this.leaderboardBanned = leaderboardBanned;
     }
 
     public void setId(long l) {

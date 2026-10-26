@@ -1,0 +1,108 @@
+/* On-screen keyboard with a finger guide. */
+
+.kb {
+    --kb-h: clamp(1.9rem, 3.1vw, 2.7rem);
+    --f-lp: #ff8a98;
+    --f-lr: #ffb86b;
+    --f-lm: #ffe27a;
+    --f-li: #86e3a8;
+    --f-ri: #6fd6ff;
+    --f-rm: #98a9ff;
+    --f-rr: #c996ff;
+    --f-rp: #ff94d6;
+    --f-th: #c8ccd8;
+
+    display: grid;
+    gap: 0.28rem;
+    width: min(100%, 56rem);
+    margin: 0 auto;
+    user-select: none;
+}
+
+.kb-row {
+    display: flex;
+    gap: 0.28rem;
+}
+
+.kb-key {
+    position: relative;
+    display: grid;
+    flex-basis: 0;
+    place-items: center;
+    height: var(--kb-h);
+    min-width: 0;
+    border-radius: 0.35rem;
+    background: var(--kc-cap);
+    box-shadow: 0 0.14rem 0 var(--kc-cap-side);
+    color: var(--kc-legend);
+    font: 600 clamp(0.55rem, 1.05vw, 0.8rem)/1 var(--kc-font-key);
+    transition: background-color 90ms, transform 90ms, box-shadow 90ms;
+}
+
+.kb--fingers .kb-key {
+    --fc: var(--f-th);
+
+    background: color-mix(in srgb, var(--fc) 38%, var(--kc-cap));
+}
+
+.kb--fingers .kb-key[data-finger='lp'] { --fc: var(--f-lp); }
+.kb--fingers .kb-key[data-finger='lr'] { --fc: var(--f-lr); }
+.kb--fingers .kb-key[data-finger='lm'] { --fc: var(--f-lm); }
+.kb--fingers .kb-key[data-finger='li'] { --fc: var(--f-li); }
+.kb--fingers .kb-key[data-finger='ri'] { --fc: var(--f-ri); }
+.kb--fingers .kb-key[data-finger='rm'] { --fc: var(--f-rm); }
+.kb--fingers .kb-key[data-finger='rr'] { --fc: var(--f-rr); }
+.kb--fingers .kb-key[data-finger='rp'] { --fc: var(--f-rp); }
+
+/* Keys a lesson teaches. */
+.kb-key.is-lit {
+    outline: 2px solid var(--kc-accent);
+    outline-offset: -2px;
+}
+
+/* The next key to press: sunk and lit, like it is waiting for your finger. */
+.kb-key.is-next {
+    background: var(--kc-accent);
+    box-shadow: 0 0.03rem 0 var(--kc-accent-side), 0 0 1rem var(--kc-accent);
+    color: var(--kc-accent-ink);
+    transform: translateY(0.1rem);
+}
+
+.kb-key.is-ok {
+    background: #6ee7a8;
+    color: #06291a;
+}
+
+.kb-key.is-bad {
+    background: var(--kc-danger);
+    color: #2a0805;
+}
+
+/* Little ridge on F and J that the index fingers feel for. */
+.kb-bump {
+    position: absolute;
+    bottom: 22%;
+    left: 50%;
+    width: 38%;
+    height: 0.12rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.6;
+    transform: translateX(-50%);
+}
+
+@media (max-width: 640px) {
+    .kb-row {
+        gap: 0.15rem;
+    }
+
+    .kb {
+        gap: 0.15rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kb-key {
+        transition: none;
+    }
+}

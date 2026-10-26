@@ -6,6 +6,18 @@ public class LeaderboardResponse {
     private String username;
     private int totalXp;
     private int level;
+    private boolean currentUser;
+
+    public LeaderboardResponse(
+            int rank,
+            String username,
+            int totalXp,
+            int level,
+            boolean currentUser
+    ) {
+        this(rank, username, totalXp, level);
+        this.currentUser = currentUser;
+    }
 
     public LeaderboardResponse(
             int rank,
@@ -33,5 +45,9 @@ public class LeaderboardResponse {
 
     public int getLevel() {
         return level;
+    }
+
+    public boolean isCurrentUser() {
+        return currentUser;
     }
 }

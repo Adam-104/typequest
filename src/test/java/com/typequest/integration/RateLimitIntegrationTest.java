@@ -11,6 +11,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -94,16 +95,13 @@ class RateLimitIntegrationTest {
 
     @Test
     void nonSensitiveEndpointDoesNotInvokeRateLimiter() throws Exception {
-        mockMvc.perform(post("/api/auth/register")
+        // /api/auth/refresh is called silently in the background by the app,
+        // so it must never be rate limited.
+        mockMvc.perform(post("/api/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                                {
-                                  "username": "testuser",
-                                  "email": "test@example.com",
-                                  "password": "ExamplePassword123!"
-                                }
-                                """));
+                .content("{\"refreshToken\": \"anything\"}"));
 
         verify(rateLimitService, never()).isAllowed(anyString());
+        verify(rateLimitService, never()).isAllowed(anyString(), anyInt());
     }
 }

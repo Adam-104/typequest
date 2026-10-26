@@ -1,0 +1,276 @@
+/* Shared styles for history / leaderboard / achievements / admin pages
+   (paper theme) and the post-game reward banner (shown on dark screens). */
+
+.page-card {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 0 1px 0 var(--rule-strong), 0 14px 22px -18px rgba(var(--shadow-rgb), 0.7);
+}
+
+.page-card h2 {
+    margin: 0 0 16px;
+    font-size: 24px;
+}
+
+.page-note {
+    margin: 18px 0 0;
+    color: var(--muted);
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th {
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--ink);
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+.data-table td {
+    padding: 13px 12px;
+    border-bottom: 1px dashed var(--rule-strong);
+}
+
+.data-table tr.row-me td {
+    background: var(--ribbon-wash);
+    font-weight: 600;
+}
+
+.you-tag {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border: 1.5px solid var(--ribbon);
+    border-radius: 3px;
+    color: var(--ribbon);
+    font-family: var(--font-type);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: lowercase;
+    transform: rotate(-2deg);
+    display: inline-block;
+}
+
+/* States */
+.page-state {
+    padding: 36px 0;
+    text-align: center;
+}
+
+.page-state-icon {
+    font-size: 36px;
+}
+
+.page-state p {
+    color: var(--muted);
+}
+
+.skeleton-list {
+    display: grid;
+    gap: 10px;
+}
+
+.skeleton-row {
+    height: 44px;
+    border-radius: 3px;
+    background: linear-gradient(
+        90deg,
+        rgba(var(--ink-rgb), 0.05),
+        rgba(var(--ink-rgb), 0.11),
+        rgba(var(--ink-rgb), 0.05)
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+/* Achievements: badges pinned to the page */
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.achievement-card {
+    display: flex;
+    gap: 14px;
+    padding: 18px;
+    border: 1px dashed var(--rule-strong);
+    border-radius: 3px;
+    background: var(--sheet-2);
+}
+
+.achievement-card.unlocked {
+    border: 1.5px solid var(--ink);
+    background: var(--sheet);
+    box-shadow: 4px 4px 0 var(--hard);
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+
+.achievement-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.achievement-card p {
+    margin: 4px 0 8px;
+    color: var(--ink-soft);
+}
+
+.achievement-card small {
+    color: var(--ribbon);
+    font-family: var(--font-type);
+    font-weight: 700;
+}
+
+/* Reward banner shown after a game */
+.reward-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 420px;
+    margin: 16px auto 0;
+    padding: 14px 18px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 4px 4px 0 var(--hard);
+    color: var(--ink);
+    text-align: left;
+}
+
+.reward-banner button {
+    align-self: flex-start;
+    padding: 6px 14px;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    background: var(--ink);
+    color: var(--on-ink);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.reward-error {
+    border-color: var(--ribbon);
+}
+
+.reward-success {
+    border-color: var(--green);
+}
+
+.reward-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+}
+
+.reward-xp {
+    color: var(--green);
+    font-family: var(--font-type);
+    font-size: 1.5rem;
+}
+
+.reward-levelup {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--amber);
+    color: #1b1300;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    animation: reward-pop 0.5s ease-out;
+}
+
+@keyframes reward-pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.reward-achievements {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.reward-achievements li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reward-achievements small {
+    display: block;
+    color: var(--muted);
+}
+
+.reward-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    border: 2px solid rgba(var(--ink-rgb), 0.25);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: reward-spin 0.8s linear infinite;
+    vertical-align: -2px;
+}
+
+@keyframes reward-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton-row,
+    .reward-levelup,
+    .reward-spinner {
+        animation: none;
+    }
+}
+
+/* A finished game by someone who is not signed in. */
+.reward-guest {
+    display: grid;
+    gap: 6px;
+    border-color: var(--ink);
+    background: var(--wash-amber);
+    color: var(--ink);
+}
+
+.reward-guest-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.reward-guest-actions a {
+    color: var(--ribbon);
+    font-weight: 700;
+}

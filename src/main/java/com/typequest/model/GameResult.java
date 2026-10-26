@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.typequest.model.User;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,8 +30,11 @@ public class GameResult {
 
     private LocalDateTime playedAt;
 
+    // Stored as VARCHAR (not a native MySQL ENUM) so adding a new game
+    // type never requires a schema migration.
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(nullable = false, length = 50)
     private GameType gameType;
 
     @Column(nullable = false)

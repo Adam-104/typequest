@@ -1,0 +1,436 @@
+/* Sign-in pages: a cream form sheet beside a dark typewriter panel. */
+
+.auth-page {
+    display: grid;
+    grid-template-columns: minmax(420px, 0.95fr) minmax(0, 1.05fr);
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-ui);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+    padding: 56px 56px;
+}
+
+.auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 56px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.auth-logo {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 4px solid var(--ring);
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 3px 0 var(--ring-edge);
+    color: var(--sheet);
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.auth-brand strong {
+    display: block;
+    font-family: var(--font-type);
+    font-size: 24px;
+    letter-spacing: -0.5px;
+}
+
+.auth-brand strong::after {
+    content: '_';
+    color: var(--ribbon);
+    animation: cursor-blink 1.1s steps(1) infinite;
+}
+
+.auth-brand small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 12px;
+    text-transform: lowercase;
+}
+
+.auth-heading {
+    margin-bottom: 30px;
+}
+
+.auth-heading h1 {
+    margin: 12px 0 12px;
+    font-size: clamp(34px, 3.4vw, 48px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+}
+
+.auth-heading h1 span,
+.auth-decoration-content h2 span {
+    color: var(--ribbon);
+    font-style: italic;
+}
+
+.auth-heading p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.auth-field {
+    margin-bottom: 20px;
+}
+
+.auth-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Fields are lines on a form: a sheet with an ink underline. */
+.auth-field input {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    outline: none;
+    background: var(--sheet);
+    color: var(--ink);
+    font: inherit;
+    font-family: var(--font-type);
+    font-size: 16px;
+    transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.auth-field input::placeholder {
+    color: var(--muted);
+}
+
+.auth-field input:focus {
+    background: var(--lift);
+    box-shadow: 4px 4px 0 var(--ribbon);
+}
+
+.auth-password-wrapper {
+    position: relative;
+}
+
+.auth-password-wrapper input {
+    padding-right: 70px;
+}
+
+.auth-toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.auth-form-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 4px 0 24px;
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 13px;
+}
+
+.auth-submit {
+    width: 100%;
+    min-height: 54px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--ink);
+    box-shadow: 0 5px 0 var(--hard);
+    color: var(--sheet);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+    background: var(--ink-hover);
+}
+
+.auth-submit:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--hard);
+}
+
+.auth-submit:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.auth-error,
+.auth-success {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-left: 4px solid;
+    border-radius: 2px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.auth-error {
+    border-color: var(--ribbon);
+    background: var(--ribbon-wash);
+    color: var(--ribbon-deep);
+}
+
+.auth-success {
+    border-color: var(--green);
+    background: var(--wash-green);
+    color: var(--wash-green-ink);
+}
+
+.auth-switch {
+    margin-top: 24px;
+    color: var(--ink-soft);
+    text-align: center;
+    font-size: 15px;
+}
+
+.auth-switch a {
+    color: var(--ribbon);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-footer {
+    margin-top: 44px;
+    padding-top: 18px;
+    border-top: 3px double var(--rule-strong);
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 13px;
+    text-align: center;
+    text-transform: lowercase;
+}
+
+.auth-field-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.auth-field-heading label {
+    margin-bottom: 0;
+}
+
+.auth-forgot-password {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.auth-forgot-password:hover {
+    color: var(--ribbon);
+}
+
+.auth-forgot-password:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* The dark side: a sheet in the typewriter at night ---------------------- */
+
+.auth-decoration {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 64px;
+    border-left: 3px double var(--rule-strong);
+    background:
+        repeating-linear-gradient(180deg, transparent 0 39px, rgba(251, 247, 234, 0.05) 39px 40px),
+        #231d17;
+    color: var(--sheet);
+}
+
+.auth-decoration .auth-eyebrow {
+    color: #e48b78;
+}
+
+.auth-decoration-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 520px;
+}
+
+.auth-decoration-content h2 {
+    margin: 20px 0 18px;
+    font-size: clamp(44px, 5vw, 72px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.auth-decoration-content h2 span {
+    color: #e48b78;
+}
+
+.auth-decoration-content > p {
+    max-width: 400px;
+    margin: 0;
+    color: #cfc4ad;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.auth-mini-stats {
+    display: flex;
+    gap: 36px;
+    margin-top: 52px;
+}
+
+.auth-mini-stats div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-mini-stats strong {
+    color: var(--sheet);
+    font-family: var(--font-type);
+    font-size: 30px;
+}
+
+.auth-mini-stats span {
+    color: #a99f8a;
+    font-family: var(--font-type);
+    font-size: 13px;
+    text-transform: lowercase;
+}
+
+.auth-orbit {
+    display: none;
+}
+
+.auth-floating-key {
+    position: absolute;
+    display: grid;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    border: 5px solid #6f6652;
+    border-radius: 50%;
+    background: #14100c;
+    box-shadow: 0 5px 0 #0a0805;
+    color: var(--sheet);
+    font-family: var(--font-type);
+    font-size: 20px;
+    font-weight: 700;
+    animation: auth-float 5s ease-in-out infinite;
+}
+
+.auth-decoration .key-one {
+    top: 14%;
+    right: 20%;
+}
+
+.auth-decoration .key-two {
+    top: 30%;
+    right: 8%;
+    animation-delay: -1s;
+}
+
+.auth-decoration .key-three {
+    bottom: 18%;
+    right: 22%;
+    animation-delay: -2s;
+}
+
+.auth-decoration .key-four {
+    bottom: 12%;
+    left: 12%;
+    animation-delay: -3s;
+}
+
+@keyframes auth-float {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -10px;
+    }
+}
+
+@media (max-width: 900px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-card {
+        max-width: 560px;
+        padding: 40px 26px;
+    }
+
+    .auth-brand {
+        margin-bottom: 40px;
+    }
+
+    .auth-decoration {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .auth-card {
+        padding: 30px 18px;
+    }
+
+    .auth-heading h1 {
+        font-size: 34px;
+    }
+
+    .auth-form-options {
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-floating-key {
+        animation: none;
+    }
+
+    .auth-submit {
+        transition: none;
+    }
+}

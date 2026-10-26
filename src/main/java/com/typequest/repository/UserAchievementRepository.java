@@ -20,4 +20,7 @@ public interface UserAchievementRepository
     );
 
     long countByUser_Id(Long userId);
+
+    // Account deletion
+    void deleteAllByUser_Id(Long userId);
 }

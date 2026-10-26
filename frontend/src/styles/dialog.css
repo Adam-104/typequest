@@ -1,0 +1,116 @@
+/* Confirmation dialog: a paper card with a hard shadow. */
+
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    backdrop-filter: blur(4px);
+    animation: dialog-fade 120ms ease-out;
+}
+
+.dialog-card {
+    width: 100%;
+    max-width: 26rem;
+    padding: 26px 26px 22px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 7px 7px 0 var(--hard);
+    color: var(--ink);
+    animation: dialog-rise 160ms ease-out;
+}
+
+.dialog-stamp {
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    margin-bottom: 16px;
+    border: 3px solid var(--ring);
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 2px 0 var(--ring-edge);
+    color: var(--on-ink);
+    font-size: 1.3rem;
+}
+
+.dialog-card h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.dialog-card p {
+    margin: 0;
+    color: var(--ink-soft);
+    line-height: 1.6;
+}
+
+.dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.dialog-btn {
+    min-height: 2.6rem;
+    padding: 0 18px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    background: var(--sheet);
+    box-shadow: 0 3px 0 var(--hard);
+    color: var(--ink);
+    cursor: pointer;
+    font: 700 14px var(--font-ui);
+}
+
+.dialog-btn:hover:not(:disabled) {
+    background: var(--lift);
+}
+
+.dialog-btn:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--hard);
+}
+
+.dialog-btn--primary {
+    background: var(--ribbon);
+    color: var(--on-ink);
+}
+
+.dialog-btn--primary:hover:not(:disabled) {
+    background: var(--ribbon-deep);
+}
+
+.dialog-btn:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.dialog-btn:focus-visible {
+    outline: 3px solid var(--ribbon);
+    outline-offset: 3px;
+}
+
+@keyframes dialog-fade {
+    from { opacity: 0; }
+}
+
+@keyframes dialog-rise {
+    from { opacity: 0; transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dialog-backdrop,
+    .dialog-card {
+        animation: none;
+    }
+}

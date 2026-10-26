@@ -1,0 +1,259 @@
+/* Keycap design language for the games.
+   Everything in a game is a physical key: words are rows of keycaps, buttons
+   are keys, lives are keys. Each game picks a keycap colourway below. */
+
+@import '@fontsource-variable/bricolage-grotesque/index.css';
+@import '@fontsource-variable/martian-mono/index.css';
+
+.kc {
+    --kc-font-ui: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+    --kc-font-key: 'Martian Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    /* Defaults (overridden by the colourways below) */
+    --kc-bg: #12151c;
+    --kc-bg-2: #0d0f14;
+    --kc-panel: #1a1e28;
+    --kc-line: rgba(255, 255, 255, 0.1);
+    --kc-text: #eef0f6;
+    --kc-muted: #9aa1b4;
+    --kc-cap: #d8dce6;
+    --kc-cap-side: #8b93a8;
+    --kc-cap-shine: #ffffff;
+    --kc-legend: #1b2030;
+    --kc-accent: #7cc4ff;
+    --kc-accent-side: #3f86c0;
+    --kc-accent-ink: #06131f;
+    --kc-danger: #ff6b5e;
+
+    font-family: var(--kc-font-ui);
+    color: var(--kc-text);
+}
+
+/* Colourways ------------------------------------------------------------ */
+
+/* Survival: sage caps on deep green-black. */
+.kc--survival {
+    --kc-bg: #13201c;
+    --kc-bg-2: #0c1512;
+    --kc-panel: #1a2b26;
+    --kc-cap: #c9dcc3;
+    --kc-cap-side: #7e977a;
+    --kc-legend: #16261f;
+    --kc-accent: #f3c969;
+    --kc-accent-side: #b08a2c;
+    --kc-accent-ink: #231a02;
+    --kc-danger: #ff7566;
+}
+
+/* Space: periwinkle caps on midnight blue. */
+.kc--space {
+    --kc-bg: #0f1530;
+    --kc-bg-2: #080b1c;
+    --kc-panel: #171e42;
+    --kc-cap: #cfd6ff;
+    --kc-cap-side: #7f8bd1;
+    --kc-legend: #121a46;
+    --kc-accent: #ffc857;
+    --kc-accent-side: #c28d14;
+    --kc-accent-ink: #261a00;
+    --kc-danger: #ff6f7d;
+}
+
+/* Ninja: ivory caps on charcoal plum, with a crimson Enter key. */
+.kc--ninja {
+    --kc-bg: #1a1220;
+    --kc-bg-2: #110b16;
+    --kc-panel: #261a2e;
+    --kc-cap: #efe9e2;
+    --kc-cap-side: #a79c92;
+    --kc-legend: #2a1620;
+    --kc-accent: #e5384f;
+    --kc-accent-side: #a1182e;
+    --kc-accent-ink: #ffffff;
+    --kc-danger: #ff8a5c;
+}
+
+/* Keys ------------------------------------------------------------------- */
+
+.kc-key {
+    display: inline-grid;
+    place-items: center;
+    width: var(--kc-size, 2.4rem);
+    height: var(--kc-size, 2.4rem);
+    border-radius: 0.26em;
+    background: linear-gradient(180deg, var(--kc-cap-shine) -60%, var(--kc-cap) 55%);
+    box-shadow:
+        inset 0 0.07em 0 rgba(255, 255, 255, 0.7),
+        0 0.17em 0 var(--kc-cap-side),
+        0 0.3em 0.55em rgba(0, 0, 0, 0.5);
+    color: var(--kc-legend);
+    font-family: var(--kc-font-key);
+    font-size: calc(var(--kc-size, 2.4rem) * 0.48);
+    font-weight: 600;
+    line-height: 1;
+    transition: transform 70ms ease-out, box-shadow 70ms ease-out, background-color 70ms;
+}
+
+/* A key that has been pressed: sunk into the board, lit with the accent. */
+.kc-key.is-typed {
+    transform: translateY(0.14em);
+    background: var(--kc-accent);
+    box-shadow:
+        inset 0 0.05em 0 rgba(255, 255, 255, 0.35),
+        0 0.03em 0 var(--kc-accent-side),
+        0 0.1em 0.2em rgba(0, 0, 0, 0.45);
+    color: var(--kc-accent-ink);
+}
+
+.kc-key.is-lost {
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+    color: rgba(255, 255, 255, 0.28);
+}
+
+.kc-heart {
+    --kc-size: 1.9rem;
+    color: var(--kc-danger);
+}
+
+/* A keyboard-shortcut hint such as Esc or Enter. */
+.kc kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    padding: 0.12em 0.45em 0.16em;
+    margin-left: 0.5em;
+    border-radius: 0.3em;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0.08em 0 rgba(0, 0, 0, 0.35);
+    font-family: var(--kc-font-key);
+    font-size: 0.72em;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Buttons are keys ------------------------------------------------------- */
+
+.kc-btn {
+    appearance: none;
+    padding: 0.7em 1.3em;
+    border: 0;
+    border-radius: 0.6rem;
+    background: var(--kc-cap);
+    box-shadow:
+        inset 0 0.08em 0 rgba(255, 255, 255, 0.65),
+        0 0.22em 0 var(--kc-cap-side),
+        0 0.4em 0.7em rgba(0, 0, 0, 0.4);
+    color: var(--kc-legend);
+    cursor: pointer;
+    font: 700 1rem/1.1 var(--kc-font-ui);
+    transition: transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.kc-btn:active {
+    transform: translateY(0.18em);
+    box-shadow:
+        inset 0 0.05em 0 rgba(255, 255, 255, 0.4),
+        0 0.04em 0 var(--kc-cap-side),
+        0 0.1em 0.2em rgba(0, 0, 0, 0.4);
+}
+
+.kc-btn--primary {
+    background: var(--kc-accent);
+    box-shadow:
+        inset 0 0.08em 0 rgba(255, 255, 255, 0.4),
+        0 0.22em 0 var(--kc-accent-side),
+        0 0.4em 0.7em rgba(0, 0, 0, 0.4);
+    color: var(--kc-accent-ink);
+}
+
+.kc-btn--primary:active {
+    box-shadow:
+        inset 0 0.05em 0 rgba(255, 255, 255, 0.25),
+        0 0.04em 0 var(--kc-accent-side),
+        0 0.1em 0.2em rgba(0, 0, 0, 0.4);
+}
+
+/* Quiet buttons for secondary actions: no key cap, just text. */
+.kc-btn--ghost {
+    background: transparent;
+    box-shadow: none;
+    color: var(--kc-text);
+}
+
+.kc-btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.kc-btn--ghost:active {
+    transform: none;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.kc-btn--sm {
+    padding: 0.5em 0.9em;
+    font-size: 0.9rem;
+}
+
+.kc-btn:focus-visible,
+.kc-input:focus-visible {
+    outline: 3px solid var(--kc-accent);
+    outline-offset: 3px;
+}
+
+/* Panels ----------------------------------------------------------------- */
+
+.kc-card {
+    width: min(30rem, 100%);
+    padding: 2rem;
+    border: 1px solid var(--kc-line);
+    border-radius: 1.1rem;
+    background: var(--kc-panel);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+}
+
+.kc-card--small {
+    width: min(22rem, 100%);
+}
+
+.kc-card h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 4vw, 2.2rem);
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.kc-card-lead {
+    margin: 0.7rem 0 0;
+    color: var(--kc-muted);
+    line-height: 1.5;
+}
+
+.kc-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
+}
+
+.kc-badge {
+    margin-left: 0.7rem;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    background: var(--kc-accent);
+    color: var(--kc-accent-ink);
+    font-size: 0.8rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+/* Visually hidden, still read by screen readers. */
+.kc-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

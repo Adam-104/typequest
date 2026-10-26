@@ -26,4 +26,6 @@ public interface PasswordResetTokenRepository
     Optional<PasswordResetToken> findByTokenHashForUpdate(
             @Param("tokenHash") String tokenHash);
 
+    // Account deletion
+    void deleteAllByUser_Id(Long userId);
 }

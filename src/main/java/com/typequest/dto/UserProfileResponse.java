@@ -11,6 +11,7 @@ public class UserProfileResponse {
     private long gamesPlayed;
     private long achievementsUnlocked;
     private LocalDateTime memberSince;
+    private boolean emailVerified;
 
     public UserProfileResponse(
             String username,
@@ -19,7 +20,8 @@ public class UserProfileResponse {
             int level,
             long gamesPlayed,
             long achievementsUnlocked,
-            LocalDateTime memberSince
+            LocalDateTime memberSince,
+            boolean emailVerified
     ) {
         this.username = username;
         this.email = email;
@@ -28,6 +30,7 @@ public class UserProfileResponse {
         this.gamesPlayed = gamesPlayed;
         this.achievementsUnlocked = achievementsUnlocked;
         this.memberSince = memberSince;
+        this.emailVerified = emailVerified;
     }
 
     public String getUsername() {
@@ -56,5 +59,9 @@ public class UserProfileResponse {
 
     public LocalDateTime getMemberSince() {
         return memberSince;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
     }
 }

@@ -31,6 +31,11 @@ public class RateLimitService {
     }
 
     public boolean isAllowed(String key) {
+        return isAllowed(key, MAX_ATTEMPTS);
+    }
+
+    // Same as above with a custom number of attempts per window.
+    public boolean isAllowed(String key, int maxAttempts) {
         Instant now = clock.instant();
 
         AttemptWindow window = attempts.compute(key, (ignored, current) -> {
@@ -43,7 +48,7 @@ public class RateLimitService {
             return current;
         });
 
-        return window.count.get() <= MAX_ATTEMPTS;
+        return window.count.get() <= maxAttempts;
     }
 
     @Scheduled(fixedDelay = 60_000)

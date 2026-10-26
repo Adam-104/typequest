@@ -48,6 +48,8 @@ public class GameService {
             Long userId
     ) {
 
+        validatePlausibility(request);
+
         // Find the authenticated user.
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
@@ -176,5 +178,46 @@ public class GameService {
                         game.getPlayedAt()
                 ));
     }
-}
 
+    /**
+     * The client reports its own statistics, so reject combinations that
+     * cannot be produced by real typing. This does not make cheating
+     * impossible, but it stops trivial XP farming with hand-crafted requests.
+     */
+    private void validatePlausibility(GameResultRequest request) {
+
+        int correct = request.getCorrectCharacters();
+        int incorrect = request.getIncorrectCharacters();
+        int duration = request.getDurationSeconds();
+
+        if (duration > 3600) {
+            throw new IllegalArgumentException(
+                    "Game duration is too long."
+            );
+        }
+
+        if (correct <= 0) {
+            throw new IllegalArgumentException(
+                    "A game must include at least one correct character."
+            );
+        }
+
+        // Standard definition: 5 characters = 1 word.
+        double impliedWpm = (correct / 5.0) / (duration / 60.0);
+
+        if (request.getWpm() > impliedWpm * 1.05 + 2) {
+            throw new IllegalArgumentException(
+                    "Submitted WPM does not match the typed characters and duration."
+            );
+        }
+
+        double impliedAccuracy =
+                correct * 100.0 / (correct + incorrect);
+
+        if (Math.abs(request.getAccuracy() - impliedAccuracy) > 2.0) {
+            throw new IllegalArgumentException(
+                    "Submitted accuracy does not match the typed characters."
+            );
+        }
+    }
+}

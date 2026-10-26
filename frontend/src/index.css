@@ -1,0 +1,174 @@
+/* TypeQuest is a typewriter and paper: warm sheets, ink, a red ribbon.
+   Tokens live here so every page (and the games' dark "rooms") can use them. */
+
+@import '@fontsource-variable/fraunces/index.css';
+@import '@fontsource-variable/fraunces/wght-italic.css';
+@import '@fontsource-variable/bricolage-grotesque/index.css';
+@import '@fontsource/courier-prime/400.css';
+@import '@fontsource/courier-prime/700.css';
+
+:root {
+    color-scheme: light;
+
+    --paper: #efe6d0;
+    --paper-deep: #e3d7ba;
+    --sheet: #fbf7ea;
+    --sheet-2: #f5eedb;
+    --ink: #201b15;
+    --ink-soft: #4b4237;
+    --muted: #7b705f;
+    --rule: #d6c8a8;
+    --rule-strong: #b9a984;
+    --ribbon: #b3321f;
+    --ribbon-deep: #8f2415;
+    --ribbon-wash: #f2d9cf;
+    --blue: #254a77;
+    --green: #3b6a49;
+    --amber: #a96d12;
+
+    /* Helpers so one rule works on both the light and the dark sheet. */
+    --ink-rgb: 32, 27, 21;          /* for rgba(var(--ink-rgb), .1) */
+    --shadow-rgb: 70, 48, 14;       /* soft paper shadows */
+    --hard: #201b15;                /* hard offset shadows */
+    --on-ink: #fbf7ea;              /* text on an ink-coloured button */
+    --ink-hover: #34291f;
+    --lift: #ffffff;                /* a field or button under the pointer */
+    --sheet-lined: #fffdf5;
+    --margin-line: rgba(179, 50, 31, 0.45);
+    --line-blue: rgba(37, 74, 119, 0.16);
+    --ring: #d3c9ae;                /* typewriter key ring */
+    --ring-edge: #7d745f;
+    --ink-faint: #a1957f;           /* untyped text in a passage */
+    --wash-ribbon: #f2d9cf;
+    --wash-blue: #d6e0ec;
+    --wash-green: #dfe9d9;
+    --wash-green-ink: #234530;
+    --wash-amber: #f7ecc9;
+    --tint-purple: #ddd2e6;
+    --tint-blue: #d1dce8;
+    --tint-red: #efd2c8;
+    --tint-cyan: #d1e4de;
+    --tint-orange: #f1dfba;
+    --grain-opacity: 0.35;
+    --grain-blend: multiply;
+
+    /* Typewriter keys stay cream and ink in both modes (they are objects). */
+    --cap: #fbf7ea;
+    --cap-side: #b9a984;
+    --cap-ink: #201b15;
+
+    --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+    --font-ui: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+    --font-type: 'Courier Prime', 'Courier New', Courier, monospace;
+
+    /* Older names still used by a few components. */
+    --background: var(--paper);
+    --surface: var(--sheet);
+    --surface-light: var(--sheet-2);
+    --border: var(--rule);
+    --text: var(--ink);
+    --purple: var(--ribbon);
+    --purple-bright: var(--ink);
+    --cyan: var(--blue);
+
+    font-family: var(--font-ui);
+    color: var(--ink);
+    background: var(--paper);
+}
+
+/* Dark sheet: the same paper at night. Ink becomes cream, paper becomes a
+   warm near-black, and the red ribbon gets brighter so it still reads. */
+:root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --paper: #171310;
+    --paper-deep: #0f0c0a;
+    --sheet: #221c16;
+    --sheet-2: #2b241c;
+    --ink: #f1e8d2;
+    --ink-soft: #d2c7ae;
+    --muted: #a39782;
+    --rule: #3a3025;
+    --rule-strong: #5b4c38;
+    --ribbon: #e5654f;
+    --ribbon-deep: #f08a76;
+    --ribbon-wash: #4a2319;
+    --blue: #8fb5e8;
+    --green: #86c49a;
+    --amber: #e3a847;
+
+    --ink-rgb: 241, 232, 210;
+    --shadow-rgb: 0, 0, 0;
+    --hard: #000000;
+    --on-ink: #1b1611;
+    --ink-hover: #ffffff;
+    --lift: #342b21;
+    --sheet-lined: #271f18;
+    --margin-line: rgba(229, 101, 79, 0.5);
+    --line-blue: rgba(143, 181, 232, 0.14);
+    --ring: #4b3f31;
+    --ring-edge: #0d0a07;
+    --ink-faint: #75694f;
+    --wash-ribbon: #4a2319;
+    --wash-blue: #1f3048;
+    --wash-green: #1f3526;
+    --wash-green-ink: #b9e3c6;
+    --wash-amber: #3a2e12;
+    --tint-purple: #3a2f48;
+    --tint-blue: #26384c;
+    --tint-red: #4c2c24;
+    --tint-cyan: #25403a;
+    --tint-orange: #4a3a1b;
+    --grain-opacity: 0.18;
+    --grain-blend: screen;
+}
+
+html {
+    min-width: 320px;
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+/* Paper grain: a faint noise over the whole page. */
+body::before {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    content: '';
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .2 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#root {
+    position: relative;
+    z-index: 1;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--ribbon);
+    outline-offset: 3px;
+}
+
+::selection {
+    background: var(--ribbon);
+    color: var(--sheet);
+}

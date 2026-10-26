@@ -28,10 +28,14 @@ public class AdminAccountInitializer {
             @Value("${typequest.admin.password:}") String adminPassword) {
 
         return args -> {
+            // Optional: without these settings no admin is created here.
+            // An admin can also be made in the database:
+            //   UPDATE users SET role = 'ROLE_ADMIN' WHERE email = '...';
             if (adminEmail.isBlank() || adminPassword.isBlank()) {
-                throw new IllegalStateException(
-                        "Admin email and password must be configured."
+                System.out.println(
+                        "No TYPEQUEST_ADMIN_EMAIL/PASSWORD set. Skipping admin provisioning."
                 );
+                return;
             }
 
             if (adminPassword.length() < 12) {
@@ -73,6 +77,7 @@ public class AdminAccountInitializer {
             admin.setEmail(normalizedEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole(Role.ROLE_ADMIN);
+            admin.setEmailVerified(true);
 
             userRepository.save(admin);
 

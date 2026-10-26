@@ -2,6 +2,9 @@ package com.typequest.service;
 
 import com.typequest.dto.RegisterRequest;
 import com.typequest.exception.EmailAlreadyExistsException;
+import com.typequest.exception.UsernameAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import com.typequest.exception.InvalidCredentialsException;
 import com.typequest.model.Role;
 import com.typequest.model.User;
@@ -24,6 +27,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
+    // Optional so AuthService can still be built by hand in unit tests.
+    @Autowired(required = false)
+    private EmailVerificationService emailVerificationService;
+
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder, JwtService jwtService, RefreshTokenService refreshTokenService) {
@@ -40,15 +47,25 @@ public class AuthService {
                 .trim()
                 .toLowerCase(Locale.ROOT);
 
+        String username = request.getUsername().trim();
+
+        PasswordPolicy.requireValid(request.getPassword());
+
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(
                     "An account with this email already exists."
             );
         }
 
+        if (userRepository.existsByUsernameIgnoreCase(username)) {
+            throw new UsernameAlreadyExistsException(
+                    "This username is already taken."
+            );
+        }
+
         User user = new User();
 
-        user.setUsername(request.getUsername().trim());
+        user.setUsername(username);
         user.setEmail(email);
 
         // Store the BCrypt hash, never the original password.
@@ -59,7 +76,28 @@ public class AuthService {
         // Set the every user as user default
         user.setRole(Role.ROLE_USER);
 
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            // Two sign-ups raced past the checks above; the database
+            // constraints are the last line of defence.
+            String detail = String.valueOf(exception.getMostSpecificCause().getMessage())
+                    .toLowerCase(Locale.ROOT);
+
+            if (detail.contains("uk_users_username")) {
+                throw new UsernameAlreadyExistsException(
+                        "This username is already taken."
+                );
+            }
+
+            throw new EmailAlreadyExistsException(
+                    "An account with this email already exists."
+            );
+        }
+
+        if (emailVerificationService != null) {
+            emailVerificationService.sendVerification(user);
+        }
 
         return "Account registered successfully!";
     }
@@ -111,6 +149,13 @@ public class AuthService {
 
             throw new InvalidCredentialsException(
                     "Invalid email or password."
+            );
+        }
+
+        // Correct password, but an admin has switched the account off.
+        if (user.isDisabled()) {
+            throw new InvalidCredentialsException(
+                    "This account has been disabled. Please contact support."
             );
         }
 

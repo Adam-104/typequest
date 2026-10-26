@@ -10,6 +10,7 @@ import com.typequest.service.RefreshTokenService;
 import com.typequest.dto.LoginRequest;
 import com.typequest.dto.RefreshTokenResponse;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,6 +69,13 @@ class AuthControllerTest {
     @MockitoBean
     private RefreshTokenService refreshTokenService;
 
+
+    // Register and reset-password use the limiter with a custom limit. The
+    // mocked limiter would answer "no" by default, so allow those requests.
+    @BeforeEach
+    void allowCustomLimits() {
+        when(rateLimitService.isAllowed(anyString(), anyInt())).thenReturn(true);
+    }
 
     // Test 1: Logout without an access token should return 401
     @Test

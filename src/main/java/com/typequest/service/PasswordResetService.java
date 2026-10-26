@@ -3,6 +3,7 @@ package com.typequest.service;
 import com.typequest.model.PasswordResetToken;
 import com.typequest.model.User;
 import com.typequest.repository.PasswordResetTokenRepository;
+import com.typequest.repository.RefreshTokenRepository;
 import com.typequest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,7 @@ public class PasswordResetService {
 
     private final PasswordResetTokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final String resetBaseUrl;
@@ -34,12 +36,14 @@ public class PasswordResetService {
     public PasswordResetService(
             PasswordResetTokenRepository tokenRepository,
             UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository,
             PasswordEncoder passwordEncoder,
             EmailService emailService,
             @Value("${typequest.password-reset.base-url}") String resetBaseUrl) {
 
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.resetBaseUrl = resetBaseUrl;
@@ -119,11 +123,7 @@ public class PasswordResetService {
             throw new IllegalArgumentException("Invalid or expired reset link.");
         }
 
-        if (newPassword == null || newPassword.length() < 12) {
-            throw new IllegalArgumentException(
-                    "Password must contain at least 12 characters."
-            );
-        }
+        PasswordPolicy.requireValid(newPassword);
 
         String tokenHash = sha256(rawToken);
 
@@ -141,7 +141,13 @@ public class PasswordResetService {
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
 
+        // Whoever knew the old password (or stole a session) is signed out
+        // everywhere, and a lockout from earlier failed logins is cleared.
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
+
         userRepository.save(user);
+        refreshTokenRepository.revokeAllForUser(user.getId());
 
         resetToken.setUsed(true);
         tokenRepository.save(resetToken);

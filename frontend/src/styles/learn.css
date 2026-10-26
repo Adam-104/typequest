@@ -1,0 +1,354 @@
+/* Learn: the lesson player (keycap look, mint on deep teal) and the learning
+   path page (app look). Lesson player reuses practice.css layout classes. */
+
+.ln-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 1rem clamp(1rem, 3vw, 2rem) 1.2rem;
+    background: radial-gradient(120% 90% at 50% 0%, var(--kc-bg) 0%, var(--kc-bg-2) 100%);
+}
+
+.ln-crumb {
+    margin-right: 0.5em;
+    color: var(--kc-accent);
+    font-family: var(--kc-font-key);
+    font-size: 0.85em;
+}
+
+/* Intro ------------------------------------------------------------------ */
+
+.ln-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(1.2rem, 4vw, 3rem);
+    width: min(100%, 70rem);
+    margin: clamp(0.5rem, 3vh, 2rem) auto 0;
+}
+
+.ln-level {
+    margin: 0;
+    color: var(--kc-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.ln-intro-text h2 {
+    margin: 0.4rem 0 0.8rem;
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.ln-intro-text p {
+    margin: 0 0 0.8rem;
+    color: var(--kc-muted);
+    line-height: 1.55;
+}
+
+.ln-intro-text .ln-lead {
+    color: var(--kc-text);
+    font-size: 1.1rem;
+}
+
+.ln-tip {
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--kc-accent);
+    border-radius: 0 0.6rem 0.6rem 0;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ln-tip strong {
+    margin-right: 0.4em;
+    color: var(--kc-accent);
+}
+
+.ln-best {
+    font-family: var(--kc-font-key);
+    font-size: 0.85rem;
+}
+
+.ln-intro-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.ln-intro-side h3 {
+    margin: 0.4rem 0 0;
+    font-size: 0.95rem;
+}
+
+.ln-fingers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.3rem 0.8rem;
+    margin: 0;
+    padding: 0;
+    color: var(--kc-muted);
+    font-size: 0.82rem;
+    list-style: none;
+}
+
+.ln-swatch {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    margin-right: 0.5em;
+    border-radius: 0.2em;
+    background: #c8ccd8;
+}
+
+.ln-swatch[data-finger='lp'] { background: #ff8a98; }
+.ln-swatch[data-finger='lr'] { background: #ffb86b; }
+.ln-swatch[data-finger='lm'] { background: #ffe27a; }
+.ln-swatch[data-finger='li'] { background: #86e3a8; }
+.ln-swatch[data-finger='ri'] { background: #6fd6ff; }
+.ln-swatch[data-finger='rm'] { background: #98a9ff; }
+.ln-swatch[data-finger='rr'] { background: #c996ff; }
+.ln-swatch[data-finger='rp'] { background: #ff94d6; }
+
+.ln-start {
+    align-self: flex-start;
+    margin-top: 0.6rem;
+}
+
+.ln-hint {
+    min-height: 1.4em;
+}
+
+/* Results ---------------------------------------------------------------- */
+
+.ln-result {
+    width: min(34rem, 100%);
+}
+
+.ln-stars {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.ln-star {
+    --kc-size: 2.6rem;
+
+    opacity: 0.45;
+}
+
+.ln-star.is-typed {
+    opacity: 1;
+}
+
+.ln-save {
+    min-height: 1.5em;
+    margin: 1rem 0 0;
+    color: var(--kc-muted);
+    font-size: 0.9rem;
+}
+
+.ln-save[data-state='saved'] {
+    color: var(--kc-accent);
+}
+
+.ln-save[data-state='error'] {
+    color: var(--kc-danger);
+}
+
+@media (max-width: 820px) {
+    .ln-intro {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .ln-page .kc-title {
+        order: -1;
+        width: 100%;
+    }
+
+    .ln-page .kc-topbar {
+        flex-wrap: wrap;
+    }
+}
+
+/* ===== Learning path page (inside the app shell, on paper) ============= */
+
+.lp-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.4rem;
+    margin-top: 24px;
+    padding: 24px 26px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 5px 5px 0 var(--hard);
+}
+
+.lp-hero-main {
+    flex: 1 1 18rem;
+    min-width: 0;
+}
+
+.lp-hero h2 {
+    margin: 6px 0 6px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.lp-hero p {
+    margin: 0;
+    color: var(--ink-soft);
+}
+
+.lp-hero .primary-button {
+    margin-top: 0;
+}
+
+.lp-bar {
+    position: relative;
+    height: 14px;
+    margin-top: 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet-2);
+    overflow: hidden;
+}
+
+.lp-bar span {
+    display: block;
+    height: 100%;
+    background: var(--ribbon);
+    transition: width 300ms ease;
+}
+
+.lp-hero-meta {
+    margin-top: 8px;
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 0.9rem;
+}
+
+.lp-levels {
+    display: grid;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.lp-level {
+    padding: 22px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 0 1px 0 var(--rule-strong);
+}
+
+.lp-level-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.lp-level h3 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.lp-level-count {
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 0.9rem;
+}
+
+.lp-level > p {
+    margin: 6px 0 14px;
+    color: var(--ink-soft);
+}
+
+.lp-lessons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lp-lesson {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    padding: 14px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background: var(--sheet-2);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 100ms, box-shadow 100ms;
+}
+
+.lp-lesson:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--hard);
+    border-color: var(--ink);
+}
+
+.lp-lesson.is-next {
+    border: 1.5px solid var(--ribbon);
+    background: var(--sheet);
+    box-shadow: 3px 3px 0 var(--ribbon);
+}
+
+.lp-lesson-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 0.9rem;
+}
+
+.lp-lesson strong {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+
+.lp-lesson small {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.lp-stars {
+    color: var(--amber);
+    letter-spacing: 2px;
+}
+
+.lp-stars i {
+    color: rgba(var(--ink-rgb), 0.2);
+    font-style: normal;
+}
+
+.lp-tag {
+    padding: 1px 8px;
+    border: 1.5px solid var(--ribbon);
+    border-radius: 3px;
+    color: var(--ribbon);
+    font-family: var(--font-type);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: lowercase;
+    transform: rotate(-2deg);
+}

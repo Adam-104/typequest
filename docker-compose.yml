@@ -1,0 +1,59 @@
+# Runs the whole app on one machine:  docker compose up -d --build
+# Settings come from a .env file next to this one (copy .env.example and fill it in).
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_DATABASE: typequest_db
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/typequest_db
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      TYPEQUEST_JWT_SECRET: ${TYPEQUEST_JWT_SECRET:?Set TYPEQUEST_JWT_SECRET in .env}
+      TYPEQUEST_ADMIN_EMAIL: ${TYPEQUEST_ADMIN_EMAIL:-}
+      TYPEQUEST_ADMIN_PASSWORD: ${TYPEQUEST_ADMIN_PASSWORD:-}
+      MAIL_HOST: ${MAIL_HOST:?Set MAIL_HOST in .env}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:?Set MAIL_USERNAME in .env}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:?Set MAIL_PASSWORD in .env}
+      MAIL_FROM: ${MAIL_FROM:?Set MAIL_FROM in .env}
+      TYPEQUEST_CORS_ALLOWED_ORIGINS: ${TYPEQUEST_CORS_ALLOWED_ORIGINS:?Set TYPEQUEST_CORS_ALLOWED_ORIGINS in .env}
+      PASSWORD_RESET_BASE_URL: ${PASSWORD_RESET_BASE_URL:?Set PASSWORD_RESET_BASE_URL in .env}
+      EMAIL_VERIFICATION_BASE_URL: ${EMAIL_VERIFICATION_BASE_URL:?Set EMAIL_VERIFICATION_BASE_URL in .env}
+      TYPEQUEST_TRUSTED_PROXY_HOPS: ${TYPEQUEST_TRUSTED_PROXY_HOPS:-1}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO:-update}
+      JPA_SHOW_SQL: "false"
+    # Only the host itself (your reverse proxy) can reach the API directly.
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_API_URL:?Set PUBLIC_API_URL in .env}
+        VITE_CONTACT_EMAIL: ${CONTACT_EMAIL:-contact@your-domain.example}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"
+
+volumes:
+  dbdata:

@@ -1,0 +1,456 @@
+/* Settings, email banner, confirmation page, legal pages and the crash card
+   (paper theme). Loaded once from main.jsx. */
+
+/* Settings -------------------------------------------------------------- */
+
+.theme-choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.theme-choice {
+    display: grid;
+    gap: 4px;
+    padding: 10px 10px 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 4px 4px 0 var(--hard);
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.theme-choice:hover {
+    background: var(--lift);
+}
+
+.theme-choice[aria-checked='true'] {
+    background: var(--ribbon-wash);
+    box-shadow: 1px 1px 0 var(--hard);
+    transform: translate(3px, 3px);
+}
+
+.theme-choice small {
+    color: var(--muted);
+}
+
+.theme-choice:focus-visible,
+.settings-switch input:focus-visible,
+.settings-volume input:focus-visible {
+    outline: 3px solid var(--ribbon);
+    outline-offset: 3px;
+}
+
+/* A tiny sheet of paper that previews each theme. */
+.theme-swatch {
+    --sw-paper: #efe6d0;
+    --sw-sheet: #fbf7ea;
+    --sw-ink: #201b15;
+
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    height: 3.6rem;
+    margin-bottom: 4px;
+    padding: 0 12px;
+    border: 1px solid var(--sw-ink);
+    border-radius: 2px;
+    background: var(--sw-paper);
+}
+
+.theme-swatch i {
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--sw-ink);
+}
+
+.theme-swatch i:nth-child(1) { width: 70%; }
+.theme-swatch i:nth-child(2) { width: 90%; opacity: 0.55; }
+.theme-swatch i:nth-child(3) { width: 45%; background: #b3321f; }
+
+.theme-swatch--dark {
+    --sw-paper: #171310;
+    --sw-ink: #f1e8d2;
+}
+
+.theme-swatch--dark i:nth-child(3) {
+    background: #e5654f;
+}
+
+.theme-swatch--system {
+    background: linear-gradient(110deg, #efe6d0 50%, #171310 50%);
+}
+
+.theme-swatch--system i:nth-child(1) { background: #201b15; }
+.theme-swatch--system i:nth-child(2) { background: linear-gradient(90deg, #201b15 55%, #f1e8d2 55%); }
+
+.settings-switches {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.settings-switch {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.settings-switch input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 2px;
+    accent-color: var(--ribbon);
+}
+
+.settings-switch span {
+    display: grid;
+    gap: 2px;
+}
+
+.settings-switch small {
+    color: var(--muted);
+}
+
+.settings-volume {
+    display: grid;
+    gap: 8px;
+    max-width: 24rem;
+    margin-top: 18px;
+}
+
+.settings-volume b {
+    font-family: var(--font-type);
+}
+
+.settings-volume input {
+    width: 100%;
+    accent-color: var(--ribbon);
+}
+
+.settings-samples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.settings-sample {
+    padding: 8px 14px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 0 3px 0 var(--hard);
+    color: var(--ink);
+    cursor: pointer;
+    font: 600 14px var(--font-ui);
+}
+
+.settings-sample:hover:not(:disabled) {
+    background: var(--lift);
+}
+
+.settings-sample:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--hard);
+}
+
+.settings-sample:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-card {
+    max-width: 44rem;
+}
+
+.settings-current {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+    font-family: var(--font-type);
+    font-size: 16px;
+}
+
+.settings-tag {
+    padding: 2px 8px;
+    border: 1.5px solid var(--amber);
+    border-radius: 3px;
+    color: var(--amber);
+    font-family: var(--font-type);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.settings-tag[data-ok='true'] {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.settings-hint {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.settings-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--blue);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.settings-form {
+    display: grid;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.settings-form label {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.settings-form button[type='submit'] {
+    justify-self: start;
+}
+
+.settings-notice {
+    margin: 4px 0 0;
+    padding: 10px 12px;
+    border-left: 4px solid var(--green);
+    background: var(--sheet-2);
+    font-size: 14px;
+}
+
+.settings-notice[data-kind='error'] {
+    border-left-color: var(--ribbon);
+    color: var(--ribbon-deep);
+}
+
+.settings-danger {
+    border-color: var(--ribbon);
+}
+
+/* Email banner ---------------------------------------------------------- */
+
+.verify-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border: 1.5px dashed var(--amber);
+    border-radius: 3px;
+    background: var(--wash-amber);
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.verify-banner-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.verify-banner button {
+    padding: 4px 10px;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    background: var(--sheet);
+    box-shadow: 0 2px 0 var(--hard);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.verify-banner a {
+    color: var(--blue);
+}
+
+.verify-banner [data-status='error'] {
+    color: var(--ribbon-deep);
+}
+
+/* Email confirmation page ----------------------------------------------- */
+
+.verify-card {
+    margin: 0 auto;
+}
+
+.verify-continue {
+    display: inline-flex;
+    justify-content: center;
+    margin-top: 18px;
+    text-decoration: none;
+}
+
+/* Legal pages ----------------------------------------------------------- */
+
+.legal-page {
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.legal-sheet {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 44px);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 0 1px 0 var(--rule-strong), 0 18px 30px -22px rgba(var(--shadow-rgb), 0.7);
+    line-height: 1.65;
+}
+
+.legal-brand {
+    color: var(--ink);
+    font-family: var(--font-type);
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.legal-brand span {
+    color: var(--ribbon);
+}
+
+.legal-sheet h1 {
+    margin: 24px 0 4px;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 6vw, 42px);
+    line-height: 1.1;
+}
+
+.legal-sheet h2 {
+    margin: 28px 0 6px;
+    font-family: var(--font-display);
+    font-size: 22px;
+}
+
+.legal-sheet p,
+.legal-sheet li {
+    color: var(--ink-soft);
+    font-size: 16px;
+}
+
+.legal-sheet a {
+    color: var(--blue);
+}
+
+.legal-updated {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-family: var(--font-type);
+    font-size: 13px;
+}
+
+.legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule-strong);
+    font-size: 14px;
+}
+
+/* Links under the sign-in and sign-up forms, and in the sidebar. */
+.legal-inline {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.legal-inline a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.sidebar-legal {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+    font-family: var(--font-type);
+    font-size: 11px;
+}
+
+.sidebar-legal a {
+    color: var(--muted);
+}
+
+/* Crash card ------------------------------------------------------------ */
+
+.crash-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 24px;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.crash-card {
+    max-width: 30rem;
+    padding: 32px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 6px 6px 0 var(--hard);
+}
+
+.crash-eyebrow {
+    color: var(--ribbon);
+    font-family: var(--font-type);
+    font-size: 13px;
+}
+
+.crash-card h1 {
+    margin: 8px 0 12px;
+    font-family: var(--font-display);
+    font-size: 34px;
+    line-height: 1.1;
+}
+
+.crash-card em {
+    color: var(--ribbon);
+}
+
+.crash-card p {
+    margin: 0 0 20px;
+    line-height: 1.6;
+}
+
+.crash-card button {
+    padding: 10px 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: 5px;
+    background: var(--ink);
+    box-shadow: 0 3px 0 var(--hard);
+    color: var(--on-ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}

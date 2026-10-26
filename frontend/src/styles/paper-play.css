@@ -1,0 +1,443 @@
+/* "Paper" colourway for the focus screens (Practice and the lesson player):
+   a typed sheet on the desk instead of a dark arcade room. It only changes
+   tokens and the few surfaces that assumed a dark background. */
+
+.kc.kc--paper {
+    --kc-font-key: var(--font-type);
+
+    --kc-bg: var(--paper);
+    --kc-bg-2: var(--paper-deep);
+    --kc-panel: var(--sheet);
+    --kc-line: rgba(var(--ink-rgb), 0.2);
+    --kc-text: var(--ink);
+    --kc-muted: var(--muted);
+    --kc-cap: var(--cap);
+    --kc-cap-side: var(--cap-side);
+    --kc-cap-shine: #ffffff;
+    --kc-legend: var(--cap-ink);
+    --kc-accent: var(--ribbon);
+    --kc-accent-side: color-mix(in srgb, var(--kc-accent) 60%, #000);
+    --kc-accent-ink: var(--on-ink);
+    --kc-danger: var(--ribbon);
+}
+
+/* Each game has its own ink: the page, keys and meters pick it up. */
+.kc.kc--paper.kc--learn { --kc-accent: var(--blue); }
+.kc.kc--paper.kc--survival { --kc-accent: var(--green); --kc-danger: var(--ribbon); }
+.kc.kc--paper.kc--space { --kc-accent: var(--blue); }
+.kc.kc--paper.kc--ninja { --kc-accent: var(--ribbon); }
+.kc.kc--paper.kc--speed { --kc-accent: var(--amber); }
+.kc.kc--paper.kc--racer { --kc-accent: var(--ink); }
+
+.kc--paper h1,
+.kc--paper h2,
+.kc--paper h3 {
+    font-family: var(--font-display);
+}
+
+.kc--paper .kc-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+}
+
+/* Keys and buttons: flat face, ink outline, hard shadow. */
+.kc--paper .kc-btn {
+    border: 1.5px solid var(--ink);
+    background: var(--sheet);
+    color: var(--ink);
+    box-shadow: 0 0.2em 0 var(--hard);
+}
+
+.kc--paper .kc-btn:active {
+    box-shadow: 0 0.04em 0 var(--hard);
+}
+
+.kc--paper .kc-btn--primary {
+    background: var(--kc-accent);
+    box-shadow: 0 0.2em 0 var(--hard);
+    color: var(--kc-accent-ink);
+}
+
+.kc--paper .kc-btn--primary:active {
+    box-shadow: 0 0.04em 0 var(--hard);
+}
+
+.kc--paper .kc-btn--ghost {
+    border-color: transparent;
+    color: var(--ink);
+    background: transparent;
+    box-shadow: none;
+}
+
+.kc--paper .kc-btn--ghost:hover {
+    background: rgba(var(--ink-rgb), 0.08);
+}
+
+.kc--paper .kc-btn--ghost:active {
+    box-shadow: none;
+    background: rgba(var(--ink-rgb), 0.14);
+}
+
+.kc--paper kbd {
+    background: rgba(var(--ink-rgb), 0.12);
+    box-shadow: 0 0.08em 0 rgba(var(--ink-rgb), 0.3);
+}
+
+.kc--paper .kc-btn--primary kbd {
+    background: color-mix(in srgb, var(--kc-accent-ink) 25%, transparent);
+    box-shadow: none;
+}
+
+/* Surfaces */
+.kc--paper .kc-stat {
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 0 1px 0 var(--rule-strong);
+}
+
+.kc--paper .kc-stat-value {
+    font-family: var(--font-type);
+    font-weight: 700;
+}
+
+.kc--paper .kc-meter {
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background: var(--sheet-2);
+}
+
+.kc--paper .kc-meter-fill {
+    background: var(--kc-accent);
+}
+
+.kc--paper .pr-field,
+.kc--paper .kc-field {
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background:
+        linear-gradient(90deg, transparent 46px, var(--margin-line) 46px 48px, transparent 48px),
+        repeating-linear-gradient(180deg, transparent 0 31px, var(--line-blue) 31px 32px),
+        var(--sheet);
+    box-shadow: 0 22px 30px -26px rgba(var(--shadow-rgb), 0.8);
+}
+
+.kc--paper .kc-passage {
+    font-family: var(--font-type);
+    font-size: clamp(1.2rem, 2.1vw, 1.75rem);
+    line-height: 2;
+    color: var(--ink-faint);
+}
+
+.kc--paper .kc-ch.is-ok {
+    color: var(--ink);
+}
+
+.kc--paper .kc-ch.is-bad {
+    background: color-mix(in srgb, var(--ribbon) 20%, transparent);
+    color: var(--ribbon);
+}
+
+.kc--paper .kc-ch.is-current {
+    background: var(--kc-accent);
+    color: var(--kc-accent-ink);
+}
+
+.kc--paper .kc-segment {
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    background: var(--sheet-2);
+}
+
+.kc--paper .kc-seg-btn {
+    border-radius: 3px;
+}
+
+.kc--paper .kc-overlay {
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+    backdrop-filter: blur(3px);
+}
+
+.kc--paper .kc-card {
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 7px 7px 0 var(--hard);
+    color: var(--ink);
+}
+
+.kc--paper .pr-focus {
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet);
+    box-shadow: 4px 4px 0 var(--hard);
+}
+
+.kc--paper .pr-focus:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--lift);
+}
+
+.kc--paper .pr-focus[aria-checked='true'] {
+    border-color: var(--ink);
+    background: var(--ribbon-wash);
+    box-shadow: 1px 1px 0 var(--hard);
+    transform: translate(3px, 3px);
+}
+
+.kc--learn.kc--paper .pr-focus[aria-checked='true'] {
+    background: var(--wash-blue);
+}
+
+.kc--paper .pr-numbers div {
+    border-radius: 3px;
+    background: var(--sheet-2);
+}
+
+.kc--paper .ln-tip {
+    border-radius: 0 3px 3px 0;
+    background: var(--sheet-2);
+}
+
+.kc--paper .kc-key {
+    border: 1px solid rgba(var(--ink-rgb), 0.35);
+    border-radius: 50%;
+    box-shadow: 0 0.17em 0 var(--kc-cap-side);
+}
+
+.kc--paper .kc-key.is-typed {
+    border-color: var(--ink);
+}
+
+/* On-screen keyboard: typewriter-cream caps. */
+.kc--paper .kb-key {
+    border: 1px solid rgba(var(--ink-rgb), 0.28);
+    box-shadow: 0 0.14rem 0 var(--kc-cap-side);
+}
+
+.kc--paper .kb-key.is-next {
+    border-color: var(--ink);
+    box-shadow: 0 0.03rem 0 var(--hard);
+}
+
+.kc--paper .kb-key.is-ok {
+    background: #8fc7a0;
+    color: #0f2a1a;
+}
+
+.kc--paper .kb-key.is-bad {
+    background: var(--ribbon);
+    color: var(--sheet);
+}
+
+.kc--paper .ln-star {
+    border-radius: 50%;
+}
+
+/* ---------------------------------------------------------------------- */
+/* The five games on paper                                                 */
+/* ---------------------------------------------------------------------- */
+
+.kc.kc--paper.kc-page {
+    background: var(--paper);
+}
+
+.kc--paper .kc-title {
+    letter-spacing: 0;
+}
+
+.kc--paper .kc-best strong {
+    font-weight: 700;
+}
+
+.kc--paper .kc-stat-value[data-urgent='true'] {
+    color: var(--ribbon);
+}
+
+.kc--paper .kc-meter[data-level='mid'] .kc-meter-fill {
+    background: var(--amber);
+}
+
+.kc--paper .kc-meter[data-level='low'] .kc-meter-fill {
+    background: var(--ribbon);
+}
+
+/* Play fields: ruled paper by default, a different sheet for each game. */
+.kc--paper .kc-field {
+    min-width: 0;
+}
+
+.kc--space .kc-field {
+    /* Graph paper for plotting the mission. */
+    background:
+        linear-gradient(var(--line-blue) 1px, transparent 1px) 0 0 / 100% 2rem,
+        linear-gradient(90deg, var(--line-blue) 1px, transparent 1px) 0 0 / 2rem 100%,
+        var(--sheet);
+}
+
+.kc--ninja .kc-field {
+    /* A plain sheet with a red ink-stamp sun. */
+    background:
+        radial-gradient(circle at 86% 22%, var(--wash-ribbon) 0 4.2rem, transparent 4.3rem),
+        var(--sheet);
+}
+
+.kc--survival .kc-field {
+    background:
+        linear-gradient(90deg, transparent 46px, var(--margin-line) 46px 48px, transparent 48px),
+        repeating-linear-gradient(180deg, transparent 0 31px, rgba(var(--ink-rgb), 0.1) 31px 32px),
+        var(--sheet);
+}
+
+.kc--paper .kc-key.is-typed {
+    box-shadow: 0 0.03em 0 var(--kc-accent-side);
+}
+
+.kc--paper .kc-key.is-lost {
+    background: rgba(var(--ink-rgb), 0.08);
+    border-color: rgba(var(--ink-rgb), 0.15);
+    box-shadow: none;
+    color: rgba(var(--ink-rgb), 0.3);
+}
+
+.kc--paper .kc-heart {
+    color: var(--ribbon);
+}
+
+.kc--paper .kc-word.is-target {
+    filter: drop-shadow(0 0 0.5rem color-mix(in srgb, var(--kc-accent) 70%, transparent));
+}
+
+/* The edge of the page: a big typewriter key, or the ink-blue rail. */
+.kc--paper .kc-edge {
+    border: 1.5px solid var(--ink);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0 var(--hard);
+    color: var(--kc-legend);
+}
+
+.kc--paper .kc-field--x .kc-edge {
+    border-color: var(--ink);
+    box-shadow: 0 0.25rem 0 var(--hard);
+    color: var(--kc-accent-ink);
+}
+
+.kc--paper .kc-pop {
+    font-weight: 700;
+    text-shadow: 0 0 6px var(--sheet), 0 0 2px var(--sheet);
+}
+
+.kc--paper .kc-flash {
+    mix-blend-mode: normal;
+}
+
+.kc--paper .kc-overlay--light {
+    background: color-mix(in srgb, var(--paper) 60%, transparent);
+}
+
+.kc--paper .kc-card h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+
+.kc--paper .kc-badge {
+    border-radius: 3px;
+    font-family: var(--font-type);
+}
+
+.kc--paper .kc-results div {
+    border-radius: 3px;
+    background: var(--sheet-2);
+}
+
+.kc--paper .kc-card-score strong {
+    font-family: var(--font-type);
+}
+
+.kc--paper .kc-input {
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    background: var(--sheet-lined);
+    box-shadow: 4px 4px 0 var(--hard);
+    color: var(--ink);
+    font-family: var(--font-type);
+}
+
+.kc--paper .kc-input:focus-visible {
+    outline: 3px solid var(--kc-accent);
+    outline-offset: 3px;
+}
+
+.kc--paper .kc-input[data-invalid='true'] {
+    border-color: var(--ribbon);
+    background: var(--ribbon-wash);
+}
+
+.kc--paper .kc-input::placeholder {
+    font-family: var(--font-ui);
+}
+
+/* Race track: two paper lanes and an Enter key at the finish. */
+.kc--paper .kc-lane {
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background:
+        repeating-linear-gradient(90deg, var(--ink-faint) 0 0.7rem, transparent 0.7rem 1.6rem) center / 100% 2px no-repeat,
+        var(--sheet-2);
+}
+
+.kc--paper .kc-racer {
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+}
+
+.kc--paper .kc-racer.is-you {
+    box-shadow: 0 0.2rem 0 var(--hard);
+}
+
+.kc--paper .kc-racer.is-rival {
+    box-shadow: 0 0.2rem 0 var(--hard);
+    background: var(--cap);
+    color: var(--cap-ink);
+}
+
+.kc--paper .kc-finish {
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 0 0.2rem 0 var(--hard);
+}
+
+.kc--paper .kc-countdown {
+    font-family: var(--font-type);
+    font-weight: 700;
+}
+
+.kc--paper .kc-seg-btn {
+    font-family: var(--font-type);
+}
+
+.kc--paper .kc-seg-btn[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--on-ink);
+}
+
+.kc--paper .kc-ch.is-current {
+    border-radius: 2px;
+}
+
+@keyframes kc-type-pulse {
+    from { transform: scale(1.12); }
+    to { transform: scale(1); }
+}
+
+/* The key just pressed gives a small thump. */
+.kc--paper .kc-key.is-typed {
+    animation: kc-type-pulse 90ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kc--paper .kc-key.is-typed {
+        animation: none;
+    }
+}

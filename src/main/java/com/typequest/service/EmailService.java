@@ -69,4 +69,58 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendVerificationEmail(String recipient, String link) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(fromEmail);
+        message.setTo(recipient);
+        message.setSubject("Confirm your TypeQuest email");
+
+        message.setText("""
+        Welcome to TypeQuest!
+
+        Please confirm your email address with this link:
+
+        %s
+
+        The link works once and expires in 24 hours.
+
+        If you did not create a TypeQuest account, you can ignore this email.
+
+        Happy typing,
+        TypeQuest Team
+        """.formatted(link));
+
+        mailSender.send(message);
+    }
+
+    public void sendEmailChangeEmail(String recipient, String link) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(fromEmail);
+        message.setTo(recipient);
+        message.setSubject("Confirm your new TypeQuest email");
+
+        message.setText("""
+        Hello TypeQuest player,
+
+        Someone asked to use this address for a TypeQuest account.
+        Confirm the change with this link:
+
+        %s
+
+        The link works once and expires in 24 hours. Your account keeps its
+        old address until you confirm.
+
+        If this was not you, ignore this email and nothing changes.
+
+        Happy typing,
+        TypeQuest Team
+        """.formatted(link));
+
+        mailSender.send(message);
+    }
 }
