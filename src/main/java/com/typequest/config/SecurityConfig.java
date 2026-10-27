@@ -58,7 +58,14 @@ public class SecurityConfig {
 
         // Configured through TYPEQUEST_CORS_ALLOWED_ORIGINS
         // (comma-separated). Defaults to the local Vite dev server.
-        configuration.setAllowedOrigins(allowedOrigins);
+        // Each entry is an exact origin or a pattern with * in the host,
+        // for example https://typequest-*-myteam.vercel.app for preview builds.
+        configuration.setAllowedOriginPatterns(
+                allowedOrigins.stream()
+                        .map(String::trim)
+                        .filter(origin -> !origin.isEmpty())
+                        .toList()
+        );
 
         configuration.setAllowedMethods(
                 List.of(

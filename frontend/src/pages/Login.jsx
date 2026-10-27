@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
+import useSlowHint from '../hooks/useSlowHint';
 import '../styles/Auth.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
@@ -17,6 +18,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const slow = useSlowHint(loading);
     const [resetMessage, setResetMessage] = useState('');
     const [resetError, setResetError] = useState('');
     const [resetLoading, setResetLoading] = useState(false);
@@ -119,6 +121,13 @@ export default function Login() {
                     <h1>Ready to <span>level up?</span></h1>
                     <p>Sign in and continue your typing adventure.</p>
                 </div>
+
+                {slow && (
+                    <div className="auth-notice" role="status">
+                        Waking the server up. The free host sleeps when idle, so the first
+                        request can take up to a minute. Please keep this page open.
+                    </div>
+                )}
 
                 {error && (
                     <div className="auth-error" role="alert">

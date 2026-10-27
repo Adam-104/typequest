@@ -20,7 +20,9 @@ Never commit a real `.env` file.
 1. Sign up at aiven.io, create a service: **MySQL → Free plan**.
 2. When it is running, open it and copy the **Host**, **Port**, **User** and **Password**.
 3. Your `DB_URL` is:
-   `jdbc:mysql://HOST:PORT/defaultdb?sslMode=REQUIRED`
+   `jdbc:mysql://HOST:PORT/typequest?sslMode=REQUIRED`
+   (Use the **Host** and **Port** fields from Aiven. Do not paste Aiven's "Service URI" that
+   starts with `mysql://`; Java cannot read it and the app will fail to start.)
    `DB_USERNAME` is the user (usually `avnadmin`) and `DB_PASSWORD` the password.
 
 ## 3. Email (Brevo, free 300 emails a day)
@@ -67,3 +69,30 @@ first visitor does not wait. Render's 750 free hours a month cover one service r
 
 ## Later
 When you have a domain, add it in Vercel and Render, then update the three URLs in step 6.
+
+## Troubleshooting
+
+**"Failed to fetch" and a CORS error in the browser console.**
+The backend only accepts the website addresses listed in `TYPEQUEST_CORS_ALLOWED_ORIGINS`.
+Vercel gives every deployment its own address (like `typequest-abc123-yourname.vercel.app`) on top
+of your main address. List the main one, and a pattern for the others:
+
+```
+https://typequest-xxxx.vercel.app,https://typequest-*-yourname.vercel.app
+```
+
+(`*` matches any text, so each new deployment is accepted.) Save in Render and wait for the redeploy.
+
+**Friends are asked to log in to Vercel.**
+That is Vercel's *Deployment Protection*, and it applies to the deployment-specific addresses.
+Share your **production domain** instead: Vercel → your project → Settings → Domains.
+If it is still protected, turn off *Vercel Authentication* in Settings → Deployment Protection.
+
+**The app is very slow the first time.**
+Free Render services sleep after 15 minutes. The site wakes the server as soon as someone opens it, and
+the login page shows a "waking up" hint. To avoid the wait, make a free UptimeRobot monitor for
+`https://YOUR-API.onrender.com/actuator/health` every 5 minutes.
+Once your tables exist, you can also set `JPA_DDL_AUTO` to `none` in Render to make each start a few
+seconds faster. Set it back to `update` when a release adds a new table or column.
+
+**Never share a database URI or password.** If one appears in a log or a chat, reset it in Aiven.

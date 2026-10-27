@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
+import useSlowHint from '../hooks/useSlowHint';
 import '../styles/Auth.css';
 
 export default function Register() {
@@ -19,6 +20,7 @@ export default function Register() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const slow = useSlowHint(loading);
 
     function handleChange(event) {
         const {name, value} = event.target;
@@ -87,6 +89,13 @@ export default function Register() {
                     <h1>Create your <span>account.</span></h1>
                     <p>Join TypeQuest and turn every keystroke into progress.</p>
                 </div>
+
+                {slow && (
+                    <div className="auth-notice" role="status">
+                        Waking the server up. The free host sleeps when idle, so the first
+                        request can take up to a minute. Please keep this page open.
+                    </div>
+                )}
 
                 {error && (
                     <div className="auth-error" role="alert">
