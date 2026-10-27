@@ -16,8 +16,32 @@ progress.
 
 ---
 
+## Live demo
+
+**https://typequest-adam.vercel.app**
+
+No account is needed to try the games, Practice and the first lessons. Create a free account to save your
+progress, earn XP and join the leaderboard.
+
+> The demo runs on free hosting. If nobody has used it for a while, the server is asleep and the first request
+> can take up to a minute. The page tells you when that happens; after that it is fast.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Welcome page](docs/screenshots/welcome.png)<br>**Welcome page.** Visitors can try TypeQuest before signing up. | ![Dashboard in the light theme](docs/screenshots/dashboard-light.png)<br>**Dashboard.** Speed, accuracy, XP, streak and the next lesson. |
+| ![Dashboard in the dark theme](docs/screenshots/dashboard-dark.png)<br>**Dark theme.** The same paper at night; Settings also offers System default. | ![Learning path](docs/screenshots/learn.png)<br>**Learn.** Eight levels and 26 lessons. |
+| ![A lesson with the on-screen keyboard](docs/screenshots/lesson.png)<br>**Lesson.** An on-screen keyboard colours each key by finger. | ![Practice drill](docs/screenshots/practice.png)<br>**Practice.** Drills for the keys you choose, or the ones you miss. |
+| ![Typing Speed game](docs/screenshots/typing-speed.png)<br>**Typing Speed.** Mistakes are marked as you go. | ![Game result with XP](docs/screenshots/game-result.png)<br>**Results.** XP, level-ups and a new best. |
+| ![Leaderboard](docs/screenshots/leaderboard.png)<br>**Leaderboard.** Top 100 players by XP. | ![Settings with theme and sound](docs/screenshots/settings.png)<br>**Settings.** Light, dark or system theme, sound and volume. |
+| ![Admin overview](docs/screenshots/admin.png)<br>**Admin.** Stats, players, scores and content. | <img src="docs/screenshots/mobile-admin.png" alt="Admin on a phone" width="240"><br>**Responsive.** The layout adapts to phone screens. |
+
+---
+
 ## Contents
 
+0. [Live demo and screenshots](#live-demo)
 1. [Features](#1-features)
 2. [How it fits together](#2-how-it-fits-together)
 3. [Run it on your computer](#3-run-it-on-your-computer)
@@ -32,6 +56,7 @@ progress.
 12. [Deploying](#12-deploying)
 13. [Troubleshooting](#13-troubleshooting)
 14. [Ideas for later](#14-ideas-for-later)
+15. [Author](#15-author)
 
 ---
 
@@ -605,3 +630,12 @@ frontend-address variables used in emails.
 - Move the refresh token to an `HttpOnly` cookie.
 - Server-measured typing (a server-side referee) to make cheating much harder.
 - Multiplayer races and daily challenges.
+
+---
+
+## 15. Author
+
+Built by **Adam** ([@Adam-104](https://github.com/Adam-104)).
+
+Found a bug or have an idea? Open an issue on the
+[GitHub repository](https://github.com/Adam-104/typequest/issues).
