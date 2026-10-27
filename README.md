@@ -9,7 +9,7 @@ progress.
 
 | Part | Technology |
 |---|---|
-| Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, MySQL, Brevo SMTP |
+| Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, MySQL, Brevo (HTTP API or SMTP) |
 | Frontend (`frontend/`) | React 19, React Router 7, Vite 8, plain CSS (no UI library) |
 | Tests | JUnit 5, Mockito, Spring Boot Test (98 backend tests) |
 | Ops | Docker, docker compose, GitHub Actions CI, Render + Vercel + Aiven (free hosting guide) |
@@ -57,6 +57,7 @@ progress, earn XP and join the leaderboard.
 13. [Troubleshooting](#13-troubleshooting)
 14. [Ideas for later](#14-ideas-for-later)
 15. [Author](#15-author)
+16. [License](#license)
 
 ---
 
@@ -93,7 +94,7 @@ progress, earn XP and join the leaderboard.
 flowchart LR
     B[Browser<br/>React app] -- "HTTPS + JSON<br/>Authorization: Bearer JWT" --> A[Spring Boot API]
     A --> D[(MySQL)]
-    A -- SMTP --> M[Brevo mail]
+    A -- HTTPS API or SMTP --> M[Brevo mail]
     M -. "confirm / reset links" .-> B
 ```
 
@@ -165,7 +166,9 @@ Everything is an environment variable; `application.properties` maps them to Spr
 | `JPA_SHOW_SQL` | `false` | Log every SQL statement (debugging only). |
 | `TYPEQUEST_JWT_SECRET` | – | Base64 text of at least 32 random bytes; signs access tokens (HS256). |
 | `TYPEQUEST_ADMIN_EMAIL`, `TYPEQUEST_ADMIN_PASSWORD` | empty | Creates the `admin` user at startup. |
-| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | – | SMTP server (Brevo) and sender address. |
+| `BREVO_API_KEY` | empty | Brevo API key (`xkeysib-…`). When set, email is sent over HTTPS. Needed on Render's free plan, which blocks SMTP. |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | `localhost`, `587`, empty | SMTP server, used only when `BREVO_API_KEY` is empty (local development). |
+| `MAIL_FROM` | – | Sender address; must be a verified sender in Brevo. |
 | `TYPEQUEST_CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated website addresses allowed to call the API. `*` patterns are allowed. |
 | `PASSWORD_RESET_BASE_URL` | `…/reset-password` on localhost | Frontend page the reset email links to. |
 | `EMAIL_VERIFICATION_BASE_URL` | `…/verify-email` on localhost | Frontend page the confirmation email links to. |
@@ -616,7 +619,7 @@ frontend-address variables used in emails.
 | Render: *Port scan timeout* | The app did not finish starting (often an earlier error in the log, or a too-slow start on a tiny CPU). Read the lines above it. |
 | First request takes a minute | Free hosts sleep after idle time. The site wakes the server when opened; a monitor pinging `/actuator/health` every 5 minutes avoids it. |
 | Friends are asked to sign in to Vercel | Deployment Protection on a deployment-specific URL. Share the production domain, or turn off Vercel Authentication. |
-| Registration succeeds but no email arrives | Check `MAIL_*`, that `MAIL_FROM` is a sender verified in Brevo, and the spam folder. Players can resend from Settings. |
+| Registration succeeds but no email arrives | On Render's free plan SMTP is blocked: set `BREVO_API_KEY` (see DEPLOY-FREE.md). Also check that `MAIL_FROM` is a sender verified in Brevo, and the spam folder. Players can resend from Settings. |
 | *Too many requests* | The per-IP rate limit. Wait 15 minutes. Behind a proxy make sure `TYPEQUEST_TRUSTED_PROXY_HOPS` is right. |
 | Admin area missing | The account's role is not `ROLE_ADMIN`. Set the admin env variables, or `UPDATE users SET role = 'ROLE_ADMIN' WHERE email = '…';` |
 | No sound | Browsers need a click or key press first; check Settings → Sound and the device volume. |
@@ -635,7 +638,18 @@ frontend-address variables used in emails.
 
 ## 15. Author
 
-Built by **Adam** ([@Adam-104](https://github.com/Adam-104)).
+**Adam** is a developer who built TypeQuest end to end: the Spring Boot API, the MySQL schema, the React
+front end, the tests and the free-tier deployment. This project is where he practises writing clear,
+secure and well-tested full-stack code.
+
+- GitHub: [@Adam-104](https://github.com/Adam-104)
+- LinkedIn: [linkedin.com/in/alamuriadam](https://www.linkedin.com/in/alamuriadam)
+- Email: [alamuriadam300@gmail.com](mailto:alamuriadam300@gmail.com)
 
 Found a bug or have an idea? Open an issue on the
 [GitHub repository](https://github.com/Adam-104/typequest/issues).
+
+## License
+
+Released under the [MIT License](LICENSE). You may use, copy and change the code, as long as the licence
+notice stays with it.

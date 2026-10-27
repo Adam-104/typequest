@@ -26,16 +26,19 @@ Never commit a real `.env` file.
    `DB_USERNAME` is the user (usually `avnadmin`) and `DB_PASSWORD` the password.
 
 ## 3. Email (Brevo, free 300 emails a day)
-1. Sign up at brevo.com and verify your own email address as the sender.
-2. SMTP & API → SMTP: copy the **login** and create an **SMTP key**.
-   `MAIL_USERNAME` = the login, `MAIL_PASSWORD` = the key, `MAIL_FROM` = your verified address.
+1. Sign up at brevo.com and verify your own email address as the sender (Senders & IP).
+2. **Important: Render's free plan blocks the SMTP ports (25, 465, 587), so SMTP mail times out there.**
+   Use Brevo's HTTP API instead: SMTP & API → **API keys → Generate a new API key**. Copy it (it starts with
+   `xkeysib-`) and set `BREVO_API_KEY` in Render. `MAIL_FROM` = your verified sender address.
+   `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` and `MAIL_PASSWORD` are then not needed.
+3. Locally (or on a paid host) you can leave `BREVO_API_KEY` empty and use SMTP (`MAIL_*`) as before.
 
 ## 4. Backend (Render)
 1. Sign up at render.com with GitHub. **New → Blueprint**, pick the repo
    (it reads `render.yaml`). Or **New → Web Service → Docker → Free**.
 2. Fill the values it asks for:
    - `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` from step 2
-   - `MAIL_*` from step 3
+   - `BREVO_API_KEY` and `MAIL_FROM` from step 3
    - `TYPEQUEST_ADMIN_EMAIL` and `TYPEQUEST_ADMIN_PASSWORD` (12+ characters): your admin login
    - `TYPEQUEST_CORS_ALLOWED_ORIGINS`, `PASSWORD_RESET_BASE_URL`,
      `EMAIL_VERIFICATION_BASE_URL`: leave a placeholder for now, set them in step 6.

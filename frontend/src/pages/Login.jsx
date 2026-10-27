@@ -64,7 +64,16 @@ export default function Login() {
                 body: JSON.stringify({email}),
             });
 
-            const responseText = await response.text();
+            const rawText = await response.text();
+            let responseText = rawText;
+
+            // The server answers with JSON ({"message": "..."}) or plain text.
+            try {
+                const parsed = JSON.parse(rawText);
+                responseText = typeof parsed === 'string' ? parsed : (parsed?.message || '');
+            } catch {
+                responseText = rawText;
+            }
 
             if (!response.ok) {
                 throw new Error(

@@ -92,10 +92,15 @@ public class PasswordResetService {
         String resetLink =
                 resetBaseUrl + "?token=" + rawToken;
 
-        emailService.sendPasswordResetEmail(
-                user.getEmail(),
-                resetLink
-        );
+        // A mail failure must not turn into a 500 (and must not reveal that
+        // the account exists). It is logged; the player can simply try again.
+        try {
+            emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+        } catch (org.springframework.mail.MailException exception) {
+            org.slf4j.LoggerFactory.getLogger(PasswordResetService.class)
+                    .warn("Could not send password reset email to user {}: {}",
+                            user.getId(), exception.getMessage());
+        }
     }
 
     private String sha256(String value) {
