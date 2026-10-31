@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import VerifyBanner from './VerifyBanner';
 
@@ -8,7 +9,8 @@ export default function PageHeader({section}) {
     return (
         <>
         <header className="topbar">
-            <div>
+            <div className="topbar-title">
+                <Link className="topbar-logo" to="/" aria-label="TypeQuest home">T</Link>
                 <span className="breadcrumb">YOUR SPACE / </span>
                 <span className="breadcrumb-current">{section.toUpperCase()}</span>
             </div>
