@@ -1,6 +1,7 @@
 import './App.css';
-import {useState} from 'react';
-import {Navigate, NavLink, Route, Routes, useNavigate, useParams} from 'react-router-dom';
+import './styles/mobile-nav.css';
+import {useEffect, useRef, useState} from 'react';
+import {Navigate, NavLink, Route, Routes, useLocation, useNavigate, useParams} from 'react-router-dom';
 import {useAuth} from './context/AuthContext';
 import {usePlayer} from './context/PlayerContext';
 import ConfirmDialog from './components/ConfirmDialog';
@@ -101,27 +102,49 @@ const navigation = [
 const adminNavigation = {icon: '✎', label: 'Admin', path: '/admin'};
 
 
-function ProfileSection() {
-    const {user, logout} = useAuth();
+// One place for "log out": a themed confirm dialog, then back to the login page.
+// `ask()` opens it; render `dialog` somewhere in the component.
+function useLogoutDialog() {
+    const {logout} = useAuth();
     const navigate = useNavigate();
-    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-    const [loggingOut, setLoggingOut] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [busy, setBusy] = useState(false);
 
-    async function handleLogout() {
-        if (loggingOut) {
+    async function confirm() {
+        if (busy) {
             return;
         }
 
-        setLoggingOut(true);
+        setBusy(true);
 
         try {
             await logout();
-            setShowLogoutDialog(false);
+            setOpen(false);
             navigate('/login', {replace: true});
         } catch {
-            setLoggingOut(false);
+            setBusy(false);
         }
     }
+
+    const dialog = open ? (
+        <ConfirmDialog
+            title="Log out of TypeQuest?"
+            confirmLabel="Log out"
+            busyLabel="Logging out…"
+            busy={busy}
+            onConfirm={confirm}
+            onCancel={() => setOpen(false)}
+        >
+            Your progress is saved. You can sign back in anytime.
+        </ConfirmDialog>
+    ) : null;
+
+    return {ask: () => setOpen(true), dialog};
+}
+
+function ProfileSection() {
+    const {user} = useAuth();
+    const {ask, dialog} = useLogoutDialog();
 
     const username = user?.username || 'Player';
 
@@ -135,26 +158,11 @@ function ProfileSection() {
                 </span>
             </div>
 
-            <button
-                className="game-play-button"
-                type="button"
-                onClick={() => setShowLogoutDialog(true)}
-            >
+            <button className="game-play-button" type="button" onClick={ask}>
                 Log out <span>→</span>
             </button>
 
-            {showLogoutDialog && (
-                <ConfirmDialog
-                    title="Log out of TypeQuest?"
-                    confirmLabel="Log out"
-                    busyLabel="Logging out…"
-                    busy={loggingOut}
-                    onConfirm={handleLogout}
-                    onCancel={() => setShowLogoutDialog(false)}
-                >
-                    Your progress is saved. You can sign back in anytime.
-                </ConfirmDialog>
-            )}
+            {dialog}
         </div>
     );
 }
@@ -223,6 +231,144 @@ function Sidebar() {
                 </nav>
             </div>
         </aside>
+    );
+}
+
+
+// Phones and small tablets: the sidebar is hidden and this takes over. Four
+// labelled tabs for what people use most, and a Menu sheet for everything else
+// (including the account and Log out).
+const TAB_PATHS = ['/', '/learn', '/games', '/practice'];
+
+function MobileNav() {
+    const {user, isAdmin} = useAuth();
+    const {pathname} = useLocation();
+    const {ask, dialog} = useLogoutDialog();
+    const [open, setOpen] = useState(false);
+    const closeRef = useRef(null);
+
+    const tabs = navigation.filter((item) => TAB_PATHS.includes(item.path));
+    const more = [
+        ...navigation.filter((item) => !TAB_PATHS.includes(item.path)),
+        ...(isAdmin ? [adminNavigation] : []),
+    ];
+    const username = user?.username || 'Player';
+    const menuActive = more.some((item) => pathname.startsWith(item.path));
+
+    // Going to another page closes the sheet.
+    useEffect(() => {
+        setOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (!open) {
+            return undefined;
+        }
+
+        closeRef.current?.focus();
+
+        function onKey(event) {
+            if (event.key === 'Escape') {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener('keydown', onKey);
+        document.body.classList.add('mnav-lock');
+
+        return () => {
+            document.removeEventListener('keydown', onKey);
+            document.body.classList.remove('mnav-lock');
+        };
+    }, [open]);
+
+    return (
+        <>
+            <nav className="mnav" aria-label="Main navigation">
+                {tabs.map((item) => (
+                    <NavLink
+                        key={item.path}
+                        to={item.path}
+                        end={item.path === '/'}
+                        className={({isActive}) => `mnav-tab ${isActive ? 'active' : ''}`}
+                    >
+                        <span className="mnav-icon" aria-hidden="true">{item.icon}</span>
+                        <span className="mnav-label">{item.path === '/' ? 'Home' : item.label.replace('Play ', '')}</span>
+                    </NavLink>
+                ))}
+
+                <button
+                    type="button"
+                    className={`mnav-tab ${menuActive || open ? 'active' : ''}`}
+                    aria-haspopup="dialog"
+                    aria-expanded={open}
+                    onClick={() => setOpen((value) => !value)}
+                >
+                    <span className="mnav-icon" aria-hidden="true">☰</span>
+                    <span className="mnav-label">Menu</span>
+                </button>
+            </nav>
+
+            {open && (
+                <div className="msheet-backdrop" onClick={() => setOpen(false)}>
+                    <div
+                        className="msheet"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Menu"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="msheet-head">
+                            <div className="avatar">{username.charAt(0).toUpperCase()}</div>
+                            <span className="msheet-who">
+                                <strong>{username}</strong>
+                                <small>{user?.email || 'TypeQuest Player'}</small>
+                            </span>
+                            <button
+                                ref={closeRef}
+                                type="button"
+                                className="msheet-close"
+                                aria-label="Close menu"
+                                onClick={() => setOpen(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="msheet-links">
+                            {more.map((item) => (
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    className={({isActive}) => `msheet-link ${isActive ? 'active' : ''}`}
+                                >
+                                    <span className="msheet-icon" aria-hidden="true">{item.icon}</span>
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </div>
+
+                        <button
+                            type="button"
+                            className="msheet-logout"
+                            onClick={() => {
+                                setOpen(false);
+                                ask();
+                            }}
+                        >
+                            Log out <span aria-hidden="true">→</span>
+                        </button>
+
+                        <div className="msheet-legal">
+                            <NavLink to="/privacy">Privacy</NavLink>
+                            <NavLink to="/terms">Terms</NavLink>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {dialog}
+        </>
     );
 }
 
@@ -636,6 +782,7 @@ function ProtectedLayout({ children }) {
         <div className="app-shell">
             <Sidebar />
             {children}
+            <MobileNav />
         </div>
     );
 }

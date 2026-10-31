@@ -1287,39 +1287,15 @@ h3 {
 }
 
 @media (max-width: 850px) {
+    /* The sidebar gives way to the bottom tab bar (styles/mobile-nav.css). */
     .sidebar {
-        width: 76px;
-        padding: 20px 10px 14px;
-    }
-
-    .brand {
-        justify-content: center;
-        padding: 0;
-    }
-
-    .brand > span:last-child,
-    .sidebar-label,
-    .nav-item > span:not(.nav-icon),
-    .sidebar-bottom {
         display: none;
     }
 
-    .navigation {
-        margin-top: 30px;
-    }
-
-    .nav-item {
-        justify-content: center;
-        padding: 0;
-    }
-
-    .nav-icon {
-        font-size: 21px;
-    }
-
     .dashboard {
-        width: calc(100% - 76px);
-        margin-left: 76px;
+        width: 100%;
+        margin-left: 0;
+        padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
     }
 
     .welcome-section {

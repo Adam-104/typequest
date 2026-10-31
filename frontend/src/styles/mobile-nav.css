@@ -1,0 +1,228 @@
+/* Phone / small tablet navigation: labelled bottom tabs + a Menu sheet.
+   Hidden on wide screens, where the sidebar is used instead. */
+
+.mnav,
+.msheet-backdrop {
+    display: none;
+}
+
+@media (max-width: 850px) {
+    .mnav {
+        position: fixed;
+        inset: auto 0 0 0;
+        z-index: 30;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+        background: var(--paper-deep);
+        border-top: 3px double var(--rule-strong);
+        box-shadow: 0 -6px 18px rgba(var(--shadow-rgb), 0.12);
+    }
+
+    .mnav-tab {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: 3px;
+        min-height: 56px;
+        padding: 4px 2px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: none;
+        color: var(--ink-soft);
+        font: inherit;
+        cursor: pointer;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mnav-icon {
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .mnav-label {
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: 0.01em;
+    }
+
+    .mnav-tab.active {
+        background: var(--sheet);
+        border-color: var(--rule-strong);
+        color: var(--ribbon);
+        box-shadow: 0 2px 0 var(--rule-strong);
+    }
+
+    .mnav-tab.active::before {
+        content: '';
+        position: absolute;
+        top: -9px;
+        left: 22%;
+        right: 22%;
+        height: 3px;
+        border-radius: 0 0 3px 3px;
+        background: var(--ribbon);
+    }
+
+    .mnav-tab:focus-visible,
+    .msheet-link:focus-visible,
+    .msheet-logout:focus-visible,
+    .msheet-close:focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 2px;
+    }
+
+    /* The Menu sheet ----------------------------------------------------- */
+
+    .msheet-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: flex-end;
+        background: rgba(var(--ink-rgb), 0.45);
+        animation: msheet-fade 0.15s ease;
+    }
+
+    .msheet {
+        width: 100%;
+        max-height: 88dvh;
+        overflow-y: auto;
+        padding: 16px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+        background: var(--paper);
+        border-top: 3px double var(--rule-strong);
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -10px 30px rgba(var(--shadow-rgb), 0.25);
+        animation: msheet-rise 0.2s ease;
+    }
+
+    .msheet-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--rule-strong);
+    }
+
+    .msheet-who {
+        display: grid;
+        min-width: 0;
+        flex: 1;
+        gap: 2px;
+    }
+
+    .msheet-who strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 16px;
+    }
+
+    .msheet-who small {
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .msheet-close {
+        display: grid;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid var(--rule-strong);
+        border-radius: 8px;
+        background: var(--sheet);
+        color: var(--ink);
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .msheet-links {
+        display: grid;
+        gap: 6px;
+        padding: 14px 0;
+    }
+
+    .msheet-link {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 52px;
+        padding: 0 14px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--sheet);
+        color: var(--ink);
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .msheet-link.active {
+        border-color: var(--ribbon);
+        color: var(--ribbon);
+    }
+
+    .msheet-icon {
+        width: 24px;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .msheet-logout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 52px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--ink);
+        box-shadow: 0 3px 0 var(--ring-edge);
+        color: var(--on-ink);
+        font: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .msheet-legal {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        padding-top: 14px;
+        font-size: 13px;
+    }
+
+    .msheet-legal a {
+        color: var(--muted);
+    }
+
+    body.mnav-lock {
+        overflow: hidden;
+    }
+
+    @keyframes msheet-rise {
+        from { transform: translateY(24px); opacity: 0; }
+        to { transform: none; opacity: 1; }
+    }
+
+    @keyframes msheet-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+}
+
+@media (max-width: 850px) and (prefers-reduced-motion: reduce) {
+    .msheet,
+    .msheet-backdrop {
+        animation: none;
+    }
+}
