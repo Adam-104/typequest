@@ -95,7 +95,9 @@ If it is still protected, turn off *Vercel Authentication* in Settings → Deplo
 Free Render services sleep after 15 minutes. The site wakes the server as soon as someone opens it, and
 the login page shows a "waking up" hint. To avoid the wait, make a free UptimeRobot monitor for
 `https://YOUR-API.onrender.com/actuator/health` every 5 minutes.
-Once your tables exist, you can also set `JPA_DDL_AUTO` to `none` in Render to make each start a few
-seconds faster. Set it back to `update` when a release adds a new table or column.
+Tables are managed by Flyway (`src/main/resources/db/migration`). The first deploy with Flyway marks your existing
+database as version 1 without changing it. Once the app has started successfully with that deploy, set
+`JPA_DDL_AUTO` to `validate` in Render (Environment) and redeploy: Hibernate then only checks the tables.
+If validate ever refuses to start, the log names the column that differs from the code.
 
 **Never share a database URI or password.** If one appears in a log or a chat, reset it in Aiven.

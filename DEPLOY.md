@@ -74,7 +74,7 @@ Set these environment variables:
 | `PASSWORD_RESET_BASE_URL` | `https://app.example.com/reset-password` |
 | `EMAIL_VERIFICATION_BASE_URL` | `https://app.example.com/verify-email` |
 | `TYPEQUEST_TRUSTED_PROXY_HOPS` | `1` (the platform's load balancer) |
-| `JPA_DDL_AUTO` | `update` |
+| `JPA_DDL_AUTO` | `validate` (Flyway creates the tables) |
 
 Set the platform's health check path to `/actuator/health`.
 
@@ -92,7 +92,7 @@ send every path to the app so refreshing `/learn` works.
 - [ ] "Forgot password" email arrives and works.
 - [ ] Finish a lesson and play one game; XP and the leaderboard update.
 - [ ] Settings: change password, change email, delete the test account.
-- [ ] Change `JPA_DDL_AUTO` to `validate` once the tables exist, so a typo in code cannot alter your live schema.
+- [ ] Keep `JPA_DDL_AUTO=validate`. Flyway creates and changes the tables; Hibernate only checks them, so a typo in code cannot alter your live schema.
 - [ ] Put the address of `/actuator/health` into a free uptime monitor (UptimeRobot, Better Stack) so you get an email when the site is down.
 
 ## Backups

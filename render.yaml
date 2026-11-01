@@ -8,6 +8,8 @@ services:
     envVars:
       - key: TYPEQUEST_TRUSTED_PROXY_HOPS
         value: "1"
+      # First Flyway deploy: keep update. After it starts cleanly, change this to
+      # validate (see DEPLOY-FREE.md) so Hibernate only checks the tables.
       - key: JPA_DDL_AUTO
         value: update
       - key: MAIL_HOST

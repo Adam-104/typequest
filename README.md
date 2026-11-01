@@ -137,7 +137,7 @@ You need Java 25, Node 20+ and MySQL 8.
    ./mvnw spring-boot:run        # API on http://localhost:8080
    ```
    Generate the JWT secret with `openssl rand -base64 48`.
-   Tables are created automatically (`JPA_DDL_AUTO=update`).
+   Tables are created automatically by Flyway from `src/main/resources/db/migration` on the first start.
 3. **Frontend**:
    ```bash
    cd frontend
@@ -162,7 +162,8 @@ Everything is an environment variable; `application.properties` maps them to Spr
 | `DB_URL` | `jdbc:mysql://localhost:3306/typequest_db` | JDBC URL. Must start with `jdbc:mysql://`. |
 | `DB_USERNAME`, `DB_PASSWORD` | – | Database login. |
 | `DB_POOL_SIZE` | `5` | Maximum database connections. |
-| `JPA_DDL_AUTO` | `update` | `update` adds missing tables/columns; `none` or `validate` for stable production. |
+| `JPA_DDL_AUTO` | `validate` | `validate` (default): Hibernate only checks that the tables match the code; Flyway builds and changes the tables. `update` lets Hibernate change tables itself (not recommended). |
+| `FLYWAY_ENABLED` | `true` | Set `false` only to switch the migrations off. |
 | `JPA_SHOW_SQL` | `false` | Log every SQL statement (debugging only). |
 | `TYPEQUEST_JWT_SECRET` | – | Base64 text of at least 32 random bytes; signs access tokens (HS256). |
 | `TYPEQUEST_ADMIN_EMAIL`, `TYPEQUEST_ADMIN_PASSWORD` | empty | Creates the `admin` user at startup. |
@@ -353,8 +354,13 @@ erDiagram
     PASSAGES
 ```
 
-- Hibernate creates and updates tables from the model classes (`JPA_DDL_AUTO=update`). For a long-lived
-  production database, switch to `validate` and use a migration tool.
+- **Flyway** owns the schema. `src/main/resources/db/migration/V1__baseline_schema.sql` creates every table on a
+  new database. A database that already has the tables (created earlier by Hibernate) is marked "at version 1"
+  without running V1 (`spring.flyway.baseline-on-migrate`), so no data is touched. Flyway records what ran in the
+  table `flyway_schema_history`.
+- To change the schema, **never edit V1**. Add `V2__short_description.sql`, `V3__...` next to it, commit it,
+  and the next start applies it once. Hibernate runs with `JPA_DDL_AUTO=validate`: it refuses to start if the
+  tables and the Java classes disagree, which catches mistakes before users do.
 - `game_results.game_type` used to be a MySQL `ENUM`. If you have an old database, run once:
   `ALTER TABLE game_results MODIFY game_type VARCHAR(50) NOT NULL;`
 - Usernames are unique ignoring capitalisation. Before upgrading an old database, make sure no two existing
@@ -629,7 +635,6 @@ frontend-address variables used in emails.
 ## 14. Ideas for later
 
 - Move lessons and curriculum into the database so admins can edit them.
-- A real migration tool (Flyway) and `JPA_DDL_AUTO=validate` in production.
 - Move the refresh token to an `HttpOnly` cookie.
 - Server-measured typing (a server-side referee) to make cheating much harder.
 - Multiplayer races and daily challenges.
