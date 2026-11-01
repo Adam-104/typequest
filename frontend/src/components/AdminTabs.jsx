@@ -5,6 +5,7 @@ const TABS = [
     {to: '/admin/users', label: 'Players'},
     {to: '/admin/scores', label: 'Scores'},
     {to: '/admin/content', label: 'Content'},
+    {to: '/admin/lessons', label: 'Lessons'},
 ];
 
 export default function AdminTabs() {

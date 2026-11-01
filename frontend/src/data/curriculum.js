@@ -1,5 +1,10 @@
 // The TypeQuest course: 8 levels of lessons, the exercise text for each, and
-// helpers for picking the next lesson. Edit here to change the curriculum.
+// helpers for picking the next lesson.
+//
+// The data below is the built-in copy. The live course is stored in the
+// database and edited by admins; CurriculumContext loads it from the server
+// and hands it to setCurriculum(). Until then (or if the server cannot be
+// reached) the built-in copy is used, so lessons always work.
 
 export const learningLevels = [
     {
@@ -235,8 +240,78 @@ export const learningLevels = [
     },
 ];
 
+let active = null; // null = built-in copy
+
+function current() {
+    return active ?? {levels: learningLevels, exercises: lessonExercises, words: lessonExerciseWords};
+}
+
+const text = (value) => typeof value === 'string' && value.trim() !== '';
+
+// Switches to the course loaded from the server. Returns false (and keeps
+// what was there) when the data does not look like a course.
+export function setCurriculum(serverLevels) {
+    if (!Array.isArray(serverLevels) || serverLevels.length === 0) return false;
+
+    const levels = [];
+    const exercises = {};
+    const words = {};
+
+    for (const level of serverLevels) {
+        if (!level || !Array.isArray(level.lessons) || !text(level.title)) return false;
+
+        const lessons = [];
+
+        for (const lesson of level.lessons) {
+            if (!lesson || !text(lesson.id) || !text(lesson.title)) return false;
+
+            lessons.push({
+                id: lesson.id,
+                title: lesson.title,
+                duration: lesson.duration ?? '',
+                description: lesson.description ?? '',
+            });
+            exercises[lesson.id] = {
+                target: lesson.target ?? '',
+                heading: lesson.heading ?? lesson.title,
+                instruction: lesson.instruction ?? '',
+                tip: lesson.tip ?? '',
+            };
+            words[lesson.id] = Array.isArray(lesson.words) ? lesson.words.filter(text) : [];
+        }
+
+        levels.push({
+            id: level.id,
+            title: level.title,
+            subtitle: level.subtitle ?? '',
+            description: level.description ?? '',
+            icon: level.icon ?? '⌨',
+            color: level.color ?? 'purple',
+            lessons,
+        });
+    }
+
+    if (levels.every((level) => level.lessons.length === 0)) return false;
+
+    active = {levels, exercises, words};
+
+    return true;
+}
+
+export function getLevels() {
+    return current().levels;
+}
+
+export function getExercise(lessonId) {
+    return current().exercises[lessonId] ?? {};
+}
+
+export function getWords(lessonId) {
+    return current().words[lessonId] ?? [];
+}
+
 export function getAllLessons() {
-    return learningLevels.flatMap((level) =>
+    return getLevels().flatMap((level) =>
         level.lessons.map((lesson) => ({
             ...lesson,
             levelId: level.id,
@@ -451,7 +526,7 @@ export const lessonExerciseWords = {
 };
 
 export function generateLessonTarget(lessonId, fallback = '', difficulty = 'beginner', durationSeconds = 0) {
-    const words = lessonExerciseWords[lessonId];
+    const words = current().words[lessonId];
     if (!words || !words.length) return fallback;
 
     const difficultyCounts = {beginner: 7, intermediate: 11, advanced: 16};

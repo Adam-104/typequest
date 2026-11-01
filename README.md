@@ -11,7 +11,7 @@ progress.
 |---|---|
 | Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, Flyway migrations, MySQL, Brevo (HTTP API or SMTP) |
 | Frontend (`frontend/`) | React 19, React Router 7, Vite 8, plain CSS (no UI library) |
-| Tests | JUnit 5, Mockito, Spring Boot Test (98 backend tests) |
+| Tests | JUnit 5, Mockito, Spring Boot Test (104 backend tests) |
 | Ops | Docker, docker compose, GitHub Actions CI, Render + Vercel + Aiven (free hosting guide) |
 
 ---
@@ -83,7 +83,8 @@ progress, earn XP and join the leaderboard.
 
 **For admins**
 - Dashboard numbers, user management (disable, ban from leaderboard, change role, unlock, reset XP),
-  moderate game results, edit achievements, and edit the passages used by the typing games.
+  moderate game results, edit achievements, edit the passages used by the typing games, and edit the lesson text
+  (titles, instructions, tips, practice words) with no deploy.
 
 **For the person running it**
 - Rate limiting, account lockout, refresh-token rotation, browser crash reports in the server log, health
@@ -226,6 +227,7 @@ DTO classes in `dto/` define the JSON in and out, with validation annotations.
 | `PasswordResetToken` | `password_reset_tokens` | Hash of a reset token, expiry, `used`. |
 | `EmailToken` | `email_tokens` | Hash of a confirm/change token, `purpose` (`VERIFY` or `CHANGE`), `newEmail`, expiry, `used`. |
 | `Passage` | `passages` | Texts for Typing Speed and Typing Racer: `category` (`SPEED`/`RACE`), `text`, `active`. Managed by admins. |
+| `LessonLevel` / `Lesson` | `lesson_levels`, `lessons` | The course: 8 levels and 26 lessons (title, duration, description, exercise heading, instruction, tip, sample text, practice words one per line). Created and seeded by `V2__lessons.sql`; admins edit the text, never the ids. |
 
 ### 5.3 Repositories (`repository/`)
 
@@ -281,7 +283,7 @@ Thin classes: read the request, find the user id from the JWT (`jwt.getSubject()
 
 `AuthController`, `PasswordResetController`, `EmailVerificationController` (public sign-in related),
 `UserController` (profile), `GameController`, `LeaderboardController`, `AchievementController`,
-`LessonProgressController`, `AccountController`, `PassageController`, `AdminController`
+`LessonProgressController`, `AccountController`, `PassageController`, `CurriculumController`, `AdminController`, `AdminLessonController`
 (class-level `@PreAuthorize("hasRole('ADMIN')")`) and `ClientErrorController` (see below). All endpoints are
 listed in section 6.
 
@@ -329,6 +331,7 @@ Base path `/api`. "Auth" means `Authorization: Bearer <access token>` is require
 | `GET /lesson-progress`, `GET /lesson-progress/{lessonId}`, `GET /lesson-progress/completed-count` | Lesson progress. |
 | `POST /lesson-progress` | Save a lesson attempt (`lessonId`, `wpm`, `accuracy`, `completed`). Best values are kept. |
 | `GET /passages?category=SPEED\|RACE` | Active admin-managed texts (empty list = use built-in texts). |
+| `GET /lessons` | The whole course (levels with their lessons and exercises). **Public**, so visitors can try level 1. |
 | `POST /account/change-password` | Current + new password; other devices signed out. |
 | `POST /account/change-email` | New email + current password; link sent to the new address. |
 | `POST /account/resend-verification` | Send the confirmation link again. |
@@ -345,6 +348,7 @@ Base path `/api`. "Auth" means `Authorization: Bearer <access token>` is require
 | `GET /admin/games`, `DELETE /admin/games/{id}` | Moderate results. |
 | `PUT /admin/achievements/{id}` | Edit name, description, icon, XP. |
 | `GET/POST /admin/passages`, `PUT/DELETE /admin/passages/{id}`, `POST /admin/passages/import` | Manage game texts; import skips duplicates. |
+| `PUT /admin/lessons/{id}` | Edit one lesson's text and practice words. Lessons cannot be added or removed, because saved progress points at their ids. |
 
 ---
 
@@ -360,12 +364,14 @@ erDiagram
     USERS ||--o{ PASSWORD_RESET_TOKENS : requests
     USERS ||--o{ EMAIL_TOKENS : confirms
     PASSAGES
+    LESSON_LEVELS ||--o{ LESSONS : groups
 ```
 
 - **Flyway** owns the schema. `src/main/resources/db/migration/V1__baseline_schema.sql` creates every table on a
   new database. A database that already has the tables (created earlier by Hibernate) is marked "at version 1"
   without running V1 (`spring.flyway.baseline-on-migrate`), so no data is touched. Flyway records what ran in the
-  table `flyway_schema_history`.
+  table `flyway_schema_history`. `V2__lessons.sql` creates `lesson_levels` and `lessons` and seeds the 8 levels and
+  26 lessons; on the live database it runs automatically at the next start.
 - To change the schema, **never edit V1**. Add `V2__short_description.sql`, `V3__...` next to it, commit it,
   and the next start applies it once. Hibernate runs with `JPA_DDL_AUTO=validate`: it refuses to start if the
   tables and the Java classes disagree, which catches mistakes before users do.
@@ -387,7 +393,7 @@ erDiagram
 `main.jsx` starts the theme watcher, the crash reporter and the server wake-up ping, then renders:
 
 ```
-ErrorBoundary > BrowserRouter > AuthProvider > PlayerProvider > LessonProgressProvider > App
+ErrorBoundary > BrowserRouter > AuthProvider > PlayerProvider > LessonProgressProvider > CurriculumProvider > App
 ```
 
 `index.html` contains a tiny script that sets `data-theme` on `<html>` before the first paint (no flash of the
@@ -404,7 +410,7 @@ wrong theme).
 | `/practice` | everyone (`TryRoute`) | `PracticePage` |
 | `/learn/lesson/:id` | everyone for level 1 (`1-*`), players for the rest | `LessonPage` |
 | `/games`, `/learn`, `/history`, `/leaderboard`, `/achievements`, `/settings` | players (`MemberLayout`; visitors are sent home) | list pages inside the sidebar layout |
-| `/admin`, `/admin/users`, `/admin/scores`, `/admin/content` | admins (`AdminRoute`) | admin pages |
+| `/admin`, `/admin/users`, `/admin/scores`, `/admin/content`, `/admin/lessons` | admins (`AdminRoute`) | admin pages |
 
 `ProtectedLayout` wraps a page in the sidebar (`Sidebar`, `ProfileSection` with the logout dialog) and the phone
 navigation (`MobileNav`). Both use the `useLogoutDialog` hook in `App.jsx`, so Log out looks and works the same
@@ -485,7 +491,10 @@ timing, counts accuracy over **all** keys pressed (so a corrected typo still low
 
 - `utils/keyStats.js` stores per-key hit/miss/slow counts in the browser. Practice's "My weak keys" focus uses
   them; `utils/drillText.js` builds the drill text for each focus.
-- `data/curriculum.js` is the course: 8 levels, 26 lessons, the exercise for each and `generateLessonTarget()`.
+- The course lives in the database and is loaded by `context/CurriculumContext.jsx` from `GET /lessons`. `data/curriculum.js`
+  holds the **built-in copy** (8 levels, 26 lessons) used until the server answers or if it cannot be reached, plus
+  `setCurriculum()`, the lookup helpers and `generateLessonTarget()`. Pages call `useCurriculum()` so they redraw when
+  the server copy arrives. Admins edit lessons at `/admin/lessons`.
   `utils/lessonGrade.js` defines the pass mark and the 1–3 star rule. `utils/keyboardMap.js` maps keys to fingers.
 - A finished lesson is saved with `POST /lesson-progress` (players only; visitors see a sign-up nudge).
 
@@ -603,14 +612,14 @@ refused afterwards, and their existing access token stops working when it expire
 
 ## 11. Testing and CI
 
-`./mvnw test` runs 98 tests, including:
+`./mvnw test` runs 104 tests, including:
 
 | Area | Examples |
 |---|---|
 | Auth | registration rules, login, lockout after 5 failures, concurrent attempts (`AuthServiceTest`, `AuthServiceRegisterTest`, `AccountLockoutIntegrationTest`, `AuthControllerTest`) |
 | Tokens | rotation, revocation, reuse rejection (`RefreshTokenServiceTest`) |
 | Email flows | verification and change (`EmailVerificationServiceTest`), reset (`PasswordResetServiceTest`) |
-| Account / admin | `AccountServiceTest`, `AdminServiceTest`, `PasswordPolicyTest` |
+| Account / admin | `AccountServiceTest`, `AdminServiceTest`, `CurriculumServiceTest` (course grouping, lesson edit rules), `PasswordPolicyTest` |
 | Rate limiting | `RateLimitServiceTest`, `RateLimitInterceptorTest`, `ClientIpResolverTest`, `RateLimitIntegrationTest` |
 | Errors / app | `GlobalExceptionHandlerTest`, `TypequestApplicationTests` (context starts) |
 
@@ -652,7 +661,6 @@ frontend-address variables used in emails.
 
 ## 14. Ideas for later
 
-- Move lessons and curriculum into the database (with a Flyway migration) so admins can edit them.
 - Move the refresh token to an `HttpOnly` cookie. This works reliably only when the website and the API share
   one domain (for example `app.example.com` and `api.example.com`); across `vercel.app` and `onrender.com`
   some browsers block such cookies.

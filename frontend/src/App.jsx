@@ -16,12 +16,14 @@ import PracticePage from './pages/PracticePage';
 import SettingsPage from './pages/SettingsPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import {PrivacyPage, TermsPage} from './pages/LegalPage';
+import {useCurriculum} from './context/CurriculumContext';
 import {getAllLessons, getNextLesson} from './data/curriculum';
 import {levelProgress, rankTitle, summarizeHistory, weekActivity} from './utils/progression';
 import AdminOverview from './pages/admin/AdminOverview';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminScores from './pages/admin/AdminScores';
 import AdminContent from './pages/admin/AdminContent';
+import AdminLessons from './pages/admin/AdminLessons';
 import {useLessonProgress} from './context/LessonProgressContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -548,6 +550,7 @@ function LevelProgress() {
 function ContinueLearningCard() {
     const navigate = useNavigate();
     const { progress } = useLessonProgress();
+    useCurriculum(); // redraw when the server copy of the course arrives
 
     const lessons = getAllLessons();
     const completedCount = lessons.filter(
@@ -993,6 +996,7 @@ function App() {
             <Route path="/admin/users" element={<AdminRoute><AdminUsers/></AdminRoute>}/>
             <Route path="/admin/scores" element={<AdminRoute><AdminScores/></AdminRoute>}/>
             <Route path="/admin/content" element={<AdminRoute><AdminContent/></AdminRoute>}/>
+            <Route path="/admin/lessons" element={<AdminRoute><AdminLessons/></AdminRoute>}/>
 
             <Route
                 path="/history"

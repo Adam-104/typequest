@@ -9,8 +9,9 @@ import {
     generateLessonTarget,
     getFollowingLesson,
     getLesson,
-    lessonExercises,
+    getExercise,
 } from '../data/curriculum';
+import {useCurriculum} from '../context/CurriculumContext';
 import {FINGER_NAMES, fingerHint, keysInText} from '../utils/keyboardMap';
 import {PASS_ACCURACY, starsFor} from '../utils/lessonGrade';
 import '../styles/keycap.css';
@@ -44,6 +45,7 @@ const clock = (ms) => {
 
 export default function LessonPage() {
     const {lessonId} = useParams();
+    useCurriculum(); // redraw when the server copy of the course arrives
     const lesson = getLesson(lessonId);
 
     const {isAuthenticated} = useAuth();
@@ -64,7 +66,7 @@ function Lesson({lesson}) {
     const {saveProgress, getLessonProgress} = useLessonProgress();
     const {isAuthenticated} = useAuth();
 
-    const exercise = lessonExercises[lesson.id] ?? {};
+    const exercise = getExercise(lesson.id);
     const fallback = exercise.target ?? 'asdf jkl;';
     const following = getFollowingLesson(lesson.id);
     const previousBest = getLessonProgress(lesson.id);

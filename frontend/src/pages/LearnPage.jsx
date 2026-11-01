@@ -3,7 +3,8 @@ import {useNavigate} from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import {ErrorState, LoadingRows} from '../components/PageStates';
 import {useLessonProgress} from '../context/LessonProgressContext';
-import {getAllLessons, getNextLesson, learningLevels} from '../data/curriculum';
+import {useCurriculum} from '../context/CurriculumContext';
+import {getAllLessons, getNextLesson} from '../data/curriculum';
 import {starsForProgress} from '../utils/lessonGrade';
 import '../styles/Pages.css';
 import '../styles/learn.css';
@@ -19,6 +20,7 @@ function Stars({count}) {
 export default function LearnPage() {
     const navigate = useNavigate();
     const {progress, loading, error, loadProgress} = useLessonProgress();
+    const {levels: learningLevels} = useCurriculum();
 
     const lessons = getAllLessons();
     const completed = lessons.filter((lesson) => progress[lesson.id]?.completed).length;

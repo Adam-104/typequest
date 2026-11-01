@@ -9,6 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import {installErrorReporting} from './utils/errorReporter.js';
 import {startThemeWatcher} from './utils/theme.js';
 import {wakeServer} from './utils/wakeServer.js';
+import {CurriculumProvider} from './context/CurriculumContext.jsx';
 import {AuthProvider} from './context/AuthContext.jsx';
 import {LessonProgressProvider} from './context/LessonProgressContext.jsx';
 import {PlayerProvider} from './context/PlayerContext.jsx';
@@ -24,7 +25,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <AuthProvider>
                     <PlayerProvider>
                         <LessonProgressProvider>
-                            <App/>
+                            <CurriculumProvider>
+                                <App/>
+                            </CurriculumProvider>
                         </LessonProgressProvider>
                     </PlayerProvider>
                 </AuthProvider>

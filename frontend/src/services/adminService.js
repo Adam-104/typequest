@@ -39,6 +39,9 @@ export const adminService = {
     updateAchievement: (authRequest, id, body) =>
         authRequest(`/api/admin/achievements/${id}`, {method: 'PUT', body}),
 
+    updateLesson: (authRequest, id, body) =>
+        authRequest(`/api/admin/lessons/${id}`, {method: 'PUT', body}),
+
     passages: (authRequest) => authRequest('/api/admin/passages'),
 
     createPassage: (authRequest, body) =>

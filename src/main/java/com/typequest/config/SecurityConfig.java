@@ -138,6 +138,9 @@ public class SecurityConfig {
                                 "/actuator/health/**"
                         ).permitAll()
 
+                        // The course is public so visitors can try the first level.
+                        .requestMatchers(HttpMethod.GET, "/api/lessons").permitAll()
+
                         .requestMatchers("/error").permitAll()
 
                         // Preserve existing authentication requirements.
