@@ -11,7 +11,7 @@ services:
       # First Flyway deploy: keep update. After it starts cleanly, change this to
       # validate (see DEPLOY-FREE.md) so Hibernate only checks the tables.
       - key: JPA_DDL_AUTO
-        value: update
+        value: validate
       - key: MAIL_HOST
         value: smtp-relay.brevo.com
       - key: MAIL_PORT
