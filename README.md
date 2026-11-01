@@ -432,7 +432,7 @@ The server decides what is allowed on every request; the guards only decide what
 - `services/authService.js`, `gameService.js`, `lessonProgressService.js`, `accountService.js`,
   `adminService.js` – one small function per endpoint.
 - `context/AuthContext.jsx` – the session. Keeps the access token **in memory** and the refresh token in
-  `localStorage` (`typequest_refresh_token`). On load it tries to refresh the session. `authRequest(endpoint)`
+  `sessionStorage` (`typequest_refresh_token`), so a reload keeps you signed in but closing the tab or browser signs you out. On load it tries to refresh the session. `authRequest(endpoint)`
   adds the token, and on HTTP 401 refreshes once (sharing one refresh among concurrent calls, because refresh
   tokens rotate) and retries. Logout and a version counter make sure an old request can never bring back a
   cleared session. Exposes `user`, `isAuthenticated`, `isAdmin` (roles read from the token for display only),
@@ -547,7 +547,7 @@ sequenceDiagram
     U->>A: POST /auth/verify-email (token from the link)
     U->>A: POST /auth/login
     A-->>U: access token (15 min) + refresh token (7 days)
-    Note over U: access token kept in memory,<br/>refresh token in localStorage
+    Note over U: access token kept in memory,<br/>refresh token in sessionStorage
     U->>A: any request + Bearer token
     A-->>U: 401 when the access token expired
     U->>A: POST /auth/refresh
