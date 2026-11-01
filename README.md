@@ -9,7 +9,7 @@ progress.
 
 | Part | Technology |
 |---|---|
-| Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, MySQL, Brevo (HTTP API or SMTP) |
+| Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, Flyway migrations, MySQL, Brevo (HTTP API or SMTP) |
 | Frontend (`frontend/`) | React 19, React Router 7, Vite 8, plain CSS (no UI library) |
 | Tests | JUnit 5, Mockito, Spring Boot Test (98 backend tests) |
 | Ops | Docker, docker compose, GitHub Actions CI, Render + Vercel + Aiven (free hosting guide) |
@@ -36,6 +36,7 @@ progress, earn XP and join the leaderboard.
 | ![Typing Speed game](docs/screenshots/typing-speed.png)<br>**Typing Speed.** Mistakes are marked as you go. | ![Game result with XP](docs/screenshots/game-result.png)<br>**Results.** XP, level-ups and a new best. |
 | ![Leaderboard](docs/screenshots/leaderboard.png)<br>**Leaderboard.** Top 100 players by XP. | ![Settings with theme and sound](docs/screenshots/settings.png)<br>**Settings.** Light, dark or system theme, sound and volume. |
 | ![Admin overview](docs/screenshots/admin.png)<br>**Admin.** Stats, players, scores and content. | <img src="docs/screenshots/mobile-admin.png" alt="Admin on a phone" width="240"><br>**Responsive.** The layout adapts to phone screens. |
+| <img src="docs/screenshots/mobile-home.png" alt="Dashboard on a phone" width="240"><br>**On a phone.** A bottom tab bar replaces the sidebar. | <img src="docs/screenshots/mobile-menu.png" alt="Menu on a phone" width="240"><br>**Menu.** Account, the other pages and Log out. |
 
 ---
 
@@ -77,6 +78,8 @@ progress, earn XP and join the leaderboard.
 - **Progress**: XP, levels, rank titles, history, five achievements, a top-100 leaderboard.
 - **Settings**: Light / Dark / System theme, sound and volume, change password, change email (confirmed by
   email), resend confirmation, delete account.
+- **On phones**: a labelled bottom tab bar (Home, Learn, Games, Practice, Menu) and a Menu sheet with the
+  account and Log out.
 
 **For admins**
 - Dashboard numbers, user management (disable, ban from leaderboard, change role, unlock, reset XP),
@@ -110,7 +113,7 @@ Repository layout:
 ```
 typequest/
 ├── src/main/java/com/typequest/   Spring Boot backend (see section 5)
-├── src/main/resources/            application.properties
+├── src/main/resources/            application.properties, db/migration/ (Flyway SQL files)
 ├── src/test/java/com/typequest/   backend tests
 ├── frontend/                      React app (see section 8)
 ├── Dockerfile                     backend image (low-memory JVM settings)
@@ -130,7 +133,8 @@ typequest/
 
 You need Java 25, Node 20+ and MySQL 8.
 
-1. **Database**: create an empty database, for example `typequest_db`.
+1. **Database**: create an empty database, for example `typequest_db`. You do not create tables: Flyway does
+   that on the first start (and applies any later migration automatically).
 2. **Backend**: set the environment variables from `.env.example` (at minimum `DB_USERNAME`, `DB_PASSWORD`,
    `TYPEQUEST_JWT_SECRET`, `MAIL_*`), then:
    ```bash
@@ -150,6 +154,10 @@ You need Java 25, Node 20+ and MySQL 8.
    before the first start; the app creates the user `admin`.
 
 Run the tests with `./mvnw test` and build the frontend with `npm run build` (inside `frontend/`).
+The tests connect to `jdbc:mysql://localhost:3306/typequest_db` with user `root` and password `root`; this is
+written into the test classes (`@TestPropertySource`), so `DB_URL` does not change it. To check that the
+migrations build a brand-new database, start the app (`./mvnw spring-boot:run`) with `DB_URL` pointing at an
+empty database and look at `SHOW TABLES`.
 
 ---
 
@@ -398,7 +406,15 @@ wrong theme).
 | `/games`, `/learn`, `/history`, `/leaderboard`, `/achievements`, `/settings` | players (`MemberLayout`; visitors are sent home) | list pages inside the sidebar layout |
 | `/admin`, `/admin/users`, `/admin/scores`, `/admin/content` | admins (`AdminRoute`) | admin pages |
 
-`ProtectedLayout` wraps a page in the sidebar (`Sidebar`, `ProfileSection` with the logout dialog).
+`ProtectedLayout` wraps a page in the sidebar (`Sidebar`, `ProfileSection` with the logout dialog) and the phone
+navigation (`MobileNav`). Both use the `useLogoutDialog` hook in `App.jsx`, so Log out looks and works the same
+everywhere.
+
+**Phones and small tablets (850 px and narrower).** The sidebar is hidden and `MobileNav` takes over:
+a bottom tab bar with **Home, Learn, Games, Practice** and **Menu**, each with an icon and a word. Menu opens
+a sheet with the account (name and email), History, Leaderboard, Achievements, Settings (and Admin for admins),
+**Log out**, Privacy and Terms. The sheet closes on Esc, on a tap outside, or when a page is chosen. The
+TypeQuest logo appears in the top bar (`PageHeader`). Styles: `styles/mobile-nav.css`.
 `App.jsx` also contains the dashboard cards (`FeaturedGame`, `GameCard`, `LevelProgress`, `ContinueLearningCard`).
 The server decides what is allowed on every request; the guards only decide what to show.
 
@@ -501,7 +517,7 @@ until the first click or key press, so the engine unlocks itself then.
 
 ### 8.11 Styles (`styles/` and top-level CSS)
 
-`index.css` (tokens, themes, grain) · `App.css` (app shell, sidebar, dashboard) · `Auth.css` · `Pages.css`
+`index.css` (tokens, themes, grain) · `App.css` (app shell, sidebar, dashboard) · `mobile-nav.css` (phone tab bar and Menu sheet) · `Auth.css` · `Pages.css`
 (history, leaderboard, reward banner) · `admin.css` · `settings.css` · `welcome.css` · `dialog.css` ·
 `keycap.css`, `arcade.css`, `passage.css`, `paper-play.css`, `practice.css`, `learn.css`, `keyboard.css` (games,
 practice, lessons). Fonts: Fraunces (headings), Bricolage Grotesque (interface), Courier Prime (typewriter text).
@@ -626,6 +642,8 @@ frontend-address variables used in emails.
 | First request takes a minute | Free hosts sleep after idle time. The site wakes the server when opened; a monitor pinging `/actuator/health` every 5 minutes avoids it. |
 | Friends are asked to sign in to Vercel | Deployment Protection on a deployment-specific URL. Share the production domain, or turn off Vercel Authentication. |
 | Registration succeeds but no email arrives | On Render's free plan SMTP is blocked: set `BREVO_API_KEY` (see DEPLOY-FREE.md). Also check that `MAIL_FROM` is a sender verified in Brevo, and the spam folder. Players can resend from Settings. |
+| Backend will not start: *Schema-validation: missing column / wrong type* | `JPA_DDL_AUTO=validate` found tables that differ from the Java classes (for example a code change without a migration, or a hand-edited table). The log names the table and column. Add a `V2__…sql` migration that fixes it. In an emergency set `JPA_DDL_AUTO=update` for one start, then add the migration. |
+| Backend will not start: *Flyway … checksum mismatch* | An already-applied migration file was edited. Never edit a `V*.sql` that has run; restore it from git and put the change in a new file. |
 | *Too many requests* | The per-IP rate limit. Wait 15 minutes. Behind a proxy make sure `TYPEQUEST_TRUSTED_PROXY_HOPS` is right. |
 | Admin area missing | The account's role is not `ROLE_ADMIN`. Set the admin env variables, or `UPDATE users SET role = 'ROLE_ADMIN' WHERE email = '…';` |
 | No sound | Browsers need a click or key press first; check Settings → Sound and the device volume. |
@@ -634,8 +652,11 @@ frontend-address variables used in emails.
 
 ## 14. Ideas for later
 
-- Move lessons and curriculum into the database so admins can edit them.
-- Move the refresh token to an `HttpOnly` cookie.
+- Move lessons and curriculum into the database (with a Flyway migration) so admins can edit them.
+- Move the refresh token to an `HttpOnly` cookie. This works reliably only when the website and the API share
+  one domain (for example `app.example.com` and `api.example.com`); across `vercel.app` and `onrender.com`
+  some browsers block such cookies.
+- Offline support with a service worker, and end-to-end browser tests.
 - Server-measured typing (a server-side referee) to make cheating much harder.
 - Multiplayer races and daily challenges.
 
