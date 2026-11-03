@@ -11,7 +11,7 @@ progress.
 |---|---|
 | Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, Flyway migrations, MySQL, Brevo (HTTP API or SMTP) |
 | Frontend (`frontend/`) | React 19, React Router 7, Vite 8, plain CSS (no UI library) |
-| Tests | JUnit 5, Mockito, Spring Boot Test (104 backend tests) |
+| Tests | JUnit 5, Mockito, Spring Boot Test (109 backend tests) |
 | Ops | Docker, docker compose, GitHub Actions CI, Render + Vercel + Aiven (free hosting guide) |
 
 ---
@@ -247,7 +247,8 @@ twice; `UserRepository.findTop100…BannedFalse…` powers the leaderboard.
 | `PasswordPolicy` | One rule everywhere: 12–72 characters, with the limit counted in UTF-8 **bytes** because BCrypt ignores everything past 72 bytes. |
 | `PasswordResetService` | Forgot password: always answers the same way whether or not the account exists; retires older unused tokens; emails a single-use link. Reset: checks the token, sets the new password, signs the user out everywhere and clears any lockout. |
 | `EmailVerificationService` | Sends the confirmation link (valid 24 h). Handles "change email": the link goes to the **new** address and the account keeps the old one until the link is used. `confirm` marks the email verified (and applies the new address for a change) and spends the token. |
-| `EmailService` | Builds and sends the four emails (confirm, change, reset, test) through Spring Mail. |
+| `EmailService` | Sends the four emails (confirm, change, reset, test) through the Brevo HTTPS API, or through SMTP when no API key is set. Each email goes out as HTML plus a plain-text version. |
+| `EmailTemplates` | Builds those emails: a branded layout with the TypeQuest logo (drawn in markup, so it shows even when images are blocked), a button for the action, the expiry time, a security note, and a copy-the-link fallback. No Spring dependencies, so it is easy to test. |
 | `AccountService` | Signed-in self-service: change password (checks the current one, signs out other devices, invalidates reset links), delete account (password required; removes tokens, progress, achievements, games, then the user; admins cannot delete themselves this way). |
 | `XpService` | XP rules (below) and level maths. |
 | `AchievementService` | Defines and awards achievements (below). |
@@ -612,7 +613,7 @@ refused afterwards, and their existing access token stops working when it expire
 
 ## 11. Testing and CI
 
-`./mvnw test` runs 104 tests, including:
+`./mvnw test` runs 109 tests, including:
 
 | Area | Examples |
 |---|---|
@@ -620,6 +621,7 @@ refused afterwards, and their existing access token stops working when it expire
 | Tokens | rotation, revocation, reuse rejection (`RefreshTokenServiceTest`) |
 | Email flows | verification and change (`EmailVerificationServiceTest`), reset (`PasswordResetServiceTest`) |
 | Account / admin | `AccountServiceTest`, `AdminServiceTest`, `CurriculumServiceTest` (course grouping, lesson edit rules), `PasswordPolicyTest` |
+| Email templates | `EmailTemplatesTest` (button, expiry text, escaping of links, plain-text version) |
 | Rate limiting | `RateLimitServiceTest`, `RateLimitInterceptorTest`, `ClientIpResolverTest`, `RateLimitIntegrationTest` |
 | Errors / app | `GlobalExceptionHandlerTest`, `TypequestApplicationTests` (context starts) |
 

@@ -1,11 +1,13 @@
 package com.typequest.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -41,23 +43,33 @@ public class EmailService {
         this.brevoApiKey = brevoApiKey == null ? "" : brevoApiKey.trim();
     }
 
-    // Single exit for every message. Failures are always MailException so the
-    // callers' existing handling keeps working.
-    private void deliver(String recipient, String subject, String text) {
+    // Single exit for every message. Each message has an HTML version (what
+    // people see) and a plain-text version (for clients that cannot show HTML).
+    // Failures are always MailException so the callers' existing handling keeps working.
+    private void deliver(String recipient, EmailTemplates.Message message) {
         if (brevoApiKey.isEmpty()) {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(recipient);
-            message.setSubject(subject);
-            message.setText(text);
-            mailSender.send(message);
+            try {
+                MimeMessage mime = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+
+                helper.setFrom(fromEmail);
+                helper.setTo(recipient);
+                helper.setSubject(message.subject());
+                helper.setText(message.text(), message.html());
+
+                mailSender.send(mime);
+            } catch (MessagingException exception) {
+                throw new MailSendException("Could not build the email: " + exception.getMessage(), exception);
+            }
+
             return;
         }
 
         String json = "{\"sender\":{\"name\":\"TypeQuest\",\"email\":" + quote(fromEmail) + "},"
                 + "\"to\":[{\"email\":" + quote(recipient) + "}],"
-                + "\"subject\":" + quote(subject) + ","
-                + "\"textContent\":" + quote(text) + "}";
+                + "\"subject\":" + quote(message.subject()) + ","
+                + "\"htmlContent\":" + quote(message.html()) + ","
+                + "\"textContent\":" + quote(message.text()) + "}";
 
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(BREVO_URL))
@@ -107,76 +119,18 @@ public class EmailService {
     }
 
     public void sendTestEmail(String recipient) {
-
-        deliver(recipient, "TypeQuest Email Configuration Test", """
-                Hello!
-
-                This is a test email from TypeQuest.
-
-                Your Spring Boot application is connected to the email service.
-
-                We're one step closer to implementing secure password resets!
-
-                Happy typing,
-                TypeQuest Team
-                """);
+        deliver(recipient, EmailTemplates.test());
     }
 
     public void sendPasswordResetEmail(String recipient, String resetLink) {
-
-        deliver(recipient, "Reset Your TypeQuest Password", """
-        Hello TypeQuest player,
-
-        We received a request to reset your password.
-
-        Use the following link to choose a new password:
-
-        %s
-
-        This link expires in 15 minutes and can only be used once.
-
-        If you did not request a password reset, you can ignore this email.
-
-        Happy typing,
-        TypeQuest Team
-        """.formatted(resetLink));
+        deliver(recipient, EmailTemplates.resetPassword(resetLink));
     }
 
     public void sendVerificationEmail(String recipient, String link) {
-
-        deliver(recipient, "Confirm your TypeQuest email", """
-        Welcome to TypeQuest!
-
-        Please confirm your email address with this link:
-
-        %s
-
-        The link works once and expires in 24 hours.
-
-        If you did not create a TypeQuest account, you can ignore this email.
-
-        Happy typing,
-        TypeQuest Team
-        """.formatted(link));
+        deliver(recipient, EmailTemplates.verifyEmail(link));
     }
 
     public void sendEmailChangeEmail(String recipient, String link) {
-
-        deliver(recipient, "Confirm your new TypeQuest email", """
-        Hello TypeQuest player,
-
-        Someone asked to use this address for a TypeQuest account.
-        Confirm the change with this link:
-
-        %s
-
-        The link works once and expires in 24 hours. Your account keeps its
-        old address until you confirm.
-
-        If this was not you, ignore this email and nothing changes.
-
-        Happy typing,
-        TypeQuest Team
-        """.formatted(link));
+        deliver(recipient, EmailTemplates.confirmNewEmail(link));
     }
 }
