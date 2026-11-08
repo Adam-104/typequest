@@ -1,6 +1,7 @@
 import {NavLink} from 'react-router-dom';
 
 import PageHeader from '../components/PageHeader';
+import ProgressChart from '../components/ProgressChart';
 import {EmptyState, ErrorState, LoadingRows} from '../components/PageStates';
 import {usePlayer} from '../context/PlayerContext';
 import {GAME_LABELS} from '../utils/progression';
@@ -28,6 +29,13 @@ export default function HistoryPage() {
                     <p>Every game you finish is saved to your account.</p>
                 </div>
             </section>
+
+            {!initialLoad && !error && history.length > 0 && (
+                <section className="page-card">
+                    <h2>Your progress</h2>
+                    <ProgressChart games={history}/>
+                </section>
+            )}
 
             <section className="page-card">
                 <h2>Completed games ({history.length})</h2>

@@ -445,3 +445,178 @@
     font-size: 14px;
     line-height: 1.5;
 }
+
+/* Password guidance under a "new password" field */
+.pw-hint-empty {
+    margin: 8px 0 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.pw-hint {
+    margin-top: 10px;
+}
+
+.pw-meter {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+.pw-meter span {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rule-strong);
+    transition: background 160ms ease;
+}
+
+.pw-meter[data-score="1"] span:nth-child(-n + 1) {
+    background: var(--ribbon);
+}
+
+.pw-meter[data-score="2"] span:nth-child(-n + 2) {
+    background: #c78a1b;
+}
+
+.pw-meter[data-score="3"] span:nth-child(-n + 3),
+.pw-meter[data-score="4"] span:nth-child(-n + 4) {
+    background: var(--green);
+}
+
+.pw-label {
+    margin: 6px 0 4px;
+    color: var(--ink-soft);
+    font-size: 13px;
+}
+
+.pw-rules {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+}
+
+.pw-rules li span {
+    display: inline-block;
+    width: 18px;
+    font-weight: 700;
+}
+
+.pw-rules li.is-met {
+    color: var(--green);
+}
+
+.pw-rules li.is-bad {
+    color: var(--ribbon);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pw-meter span {
+        transition: none;
+    }
+}
+
+/* Page not found */
+.notfound-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+}
+
+.notfound-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 40px 32px;
+    border: 1px solid var(--rule-strong);
+    background: var(--sheet);
+    box-shadow: 0 3px 0 var(--rule-strong);
+    text-align: center;
+}
+
+.notfound-code {
+    margin: 18px 0 0;
+    font-family: var(--font-mono, "Courier Prime", monospace);
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: 4px;
+    color: var(--ribbon);
+}
+
+.notfound-card h1 {
+    margin: 10px 0 8px;
+    font-size: 28px;
+}
+
+.notfound-card p {
+    margin: 0 0 24px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+}
+
+.notfound-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Rotate-your-phone card (RotatePrompt) */
+.rotate-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(var(--ink-rgb), 0.55);
+}
+
+.rotate-card {
+    width: 100%;
+    max-width: 340px;
+    padding: 26px 22px 22px;
+    text-align: center;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-bottom: 4px solid var(--ink-faint);
+    border-radius: 4px;
+}
+
+.rotate-phone { color: var(--ink); line-height: 0; }
+
+.rotate-device {
+    transform-origin: 60px 43px;
+    animation: rotate-hint 2.8s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+    0%, 25% { transform: rotate(0deg); }
+    55%, 85% { transform: rotate(-90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rotate-device { animation: none; transform: rotate(-90deg); }
+}
+
+.rotate-card h2 { margin: 10px 0 8px; font-family: var(--font-display); font-size: 1.5rem; }
+.rotate-card p { margin: 0 0 10px; font-size: 0.95rem; line-height: 1.45; color: var(--ink-soft); }
+.rotate-note { padding-top: 10px; border-top: 1px dashed var(--ink-faint); font-size: 0.85rem !important; }
+
+.rotate-continue {
+    margin-top: 6px;
+    width: 100%;
+    padding: 12px 16px;
+    font: inherit;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--ink);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}

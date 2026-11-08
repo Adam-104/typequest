@@ -75,9 +75,11 @@ progress, earn XP and join the leaderboard.
   an on-screen keyboard that shows the finger for each key.
 - **Practice**: drills built from the keys you choose, or from the keys you personally miss most.
 - **Games**: Typing Speed, Typing Racer, Word Survival, Space Mission, Ninja Word Strike.
-- **Progress**: XP, levels, rank titles, history, five achievements, a top-100 leaderboard.
+- **Progress**: XP, levels, rank titles, history with a speed/accuracy chart of your last 20 games, five achievements, a top-100 leaderboard.
 - **Settings**: Light / Dark / System theme, sound and volume, change password, change email (confirmed by
   email), resend confirmation, delete account.
+- **Polish**: each page sets its own browser tab title, unknown addresses show a friendly 404 page, shared links show a preview card (Open Graph/Twitter tags and `public/og-image.png`), and Register/Reset show a live password hint (length, bytes, strength meter).
+- **Rotate prompt**: on a phone or small tablet held upright, a dismissible card (`RotatePrompt`) suggests landscape before typing in lessons, Practice and games. It never blocks ("Stay in portrait"), hides itself when the phone's own keyboard opens or a hardware key is pressed, and landscape phones get a compact layout (`paper-play.css`).
 - **On phones**: a labelled bottom tab bar (Home, Learn, Games, Practice, Menu) and a Menu sheet with the
   account and Log out.
 
@@ -411,6 +413,7 @@ wrong theme).
 | `/practice` | everyone (`TryRoute`) | `PracticePage` |
 | `/learn/lesson/:id` | everyone for level 1 (`1-*`), players for the rest | `LessonPage` |
 | `/games`, `/learn`, `/history`, `/leaderboard`, `/achievements`, `/settings` | players (`MemberLayout`; visitors are sent home) | list pages inside the sidebar layout |
+| any other address | everyone | `NotFoundPage` (404) |
 | `/admin`, `/admin/users`, `/admin/scores`, `/admin/content`, `/admin/lessons` | admins (`AdminRoute`) | admin pages |
 
 `ProtectedLayout` wraps a page in the sidebar (`Sidebar`, `ProfileSection` with the logout dialog) and the phone
@@ -447,7 +450,7 @@ The server decides what is allowed on every request; the guards only decide what
 
 `WelcomePage` (visitor home) · `Login` · `Register` · `ResetPassword` · `VerifyEmailPage` · `LearnPage`
 (course map with progress) · `LessonPage` (intro → drill → results with stars) · `PracticePage` (setup → drill)
-· `HistoryPage` · `LeaderboardPage` · `AchievementsPage` · `SettingsPage` (Appearance, Sound, Email, Password,
+· `NotFoundPage` · `HistoryPage` (with `ProgressChart`) · `LeaderboardPage` · `AchievementsPage` · `SettingsPage` (Appearance, Sound, Email, Password,
 Delete) · `LegalPage` (privacy and terms) · `admin/AdminOverview`, `AdminUsers`, `AdminScores`, `AdminContent`.
 
 ### 8.5 Components (`components/`)
@@ -455,7 +458,7 @@ Delete) · `LegalPage` (privacy and terms) · `admin/AdminOverview`, `AdminUsers
 `ConfirmDialog` (the paper "are you sure?" card: Esc, click-outside, focus trap) · `Keyboard` (on-screen
 keyboard with finger colours and the next key highlighted) · `PageHeader`, `PageStates` (loading / error /
 empty), `StatCard`, `RewardBanner` (XP earned, level up, new achievements, or the "this one isn't saved"
-notice for visitors), `VerifyBanner` (unconfirmed email nudge), `ErrorBoundary` (a crash shows a card, not a
+notice for visitors), `VerifyBanner` (unconfirmed email nudge), `PasswordHint` (live rules and strength meter), `ProgressChart` (plain SVG line chart, no library), `TitleManager` (sets `document.title` on every route change), `RotatePrompt` (rotate-your-phone card on typing screens), `ErrorBoundary` (a crash shows a card, not a
 blank page, and is reported), `AdminShell` + `AdminTabs`.
 `components/games/*` are tiny wrappers that give each game its configuration; `components/arcade/` holds the
 real game screens (next section).
@@ -522,6 +525,8 @@ until the first click or key press, so the engine unlocks itself then.
 - `utils/wakeServer.js` – pings `/actuator/health` when the site opens so a sleeping free-tier backend wakes up
   while the visitor reads the page; `hooks/useSlowHint.js` shows a "server is waking up" hint on the login and
   register forms after 5 seconds.
+- `utils/password.js` – the browser copy of the password rule (12 characters, 72 bytes) plus the strength score; guidance only, the server decides.
+- `utils/pageTitle.js` – route to tab title map used by `TitleManager`.
 - `utils/progression.js` – level maths, rank titles, week activity and history summaries.
 - `hooks/useAsync.js` – small loading/error/data helper for list pages.
 

@@ -441,3 +441,32 @@
         animation: none;
     }
 }
+
+/* Landscape phones (about 360 px tall): tighter layout so the text, the stats and
+   the key guide fit without scrolling. Touch screens only. */
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+    .kc-page,
+    .ln-page {
+        gap: 0.4rem;
+        min-height: 0;
+        padding: 0.4rem clamp(0.8rem, 3vw, 1.4rem) 0.5rem;
+    }
+
+    .kc-topbar { gap: 0.6rem; }
+    .kc-title { font-size: 0.95rem; }
+    .kc--paper .kc-btn { padding-block: 0.3rem; font-size: 0.8rem; }
+
+    .kc-console { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.4rem; }
+    .kc-stat { min-height: 0; padding: 0.3rem 0.6rem; gap: 0.1rem; }
+    .kc-stat-label { font-size: 0.7rem; }
+    .kc-stat-note { display: none; }
+    .kc-stat-value { font-size: 1.05rem; }
+
+    .ln-intro { margin-top: 0; gap: 1rem; }
+    .ln-intro-text h2 { margin: 0.1rem 0 0.4rem; font-size: 1.35rem; }
+    .ln-intro-text p { margin-bottom: 0.4rem; font-size: 0.85rem; line-height: 1.35; }
+    .ln-intro-text .ln-lead { font-size: 0.95rem; }
+    .ln-tip, .ln-best { padding: 0.4rem 0.7rem; }
+    .ln-fingers { display: none; }
+    .ln-intro-side h3 { margin: 0 0 0.3rem; font-size: 0.9rem; }
+}

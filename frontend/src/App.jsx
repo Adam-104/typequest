@@ -29,6 +29,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import WelcomePage from './pages/WelcomePage';
 import ResetPassword from './pages/ResetPassword';
+import NotFoundPage from './pages/NotFoundPage';
+import RotatePrompt from './components/RotatePrompt';
+import TitleManager from './components/TitleManager';
 import TypingSpeedGame from './components/games/TypingSpeedGame';
 import TypingRacerGame from './components/games/TypingRacerGame';
 import WordSurvivalGame from './components/games/WordSurvivalGame';
@@ -889,6 +892,9 @@ function GuestRoute({children}) {
 
 function App() {
     return (
+        <>
+        <TitleManager/>
+        <RotatePrompt/>
         <Routes>
             <Route
                 path="/login"
@@ -1043,8 +1049,9 @@ function App() {
             <Route path="/privacy" element={<PrivacyPage/>}/>
             <Route path="/terms" element={<TermsPage/>}/>
 
-            <Route path="*" element={<Navigate to="/" replace/>}/>
+            <Route path="*" element={<NotFoundPage/>}/>
         </Routes>
+        </>
     );
 }
 

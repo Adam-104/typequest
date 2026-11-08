@@ -1,7 +1,9 @@
 import {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
+import PasswordHint from '../components/PasswordHint';
 import useSlowHint from '../hooks/useSlowHint';
+import {validatePassword} from '../utils/password';
 import '../styles/Auth.css';
 
 export default function Register() {
@@ -45,8 +47,10 @@ export default function Register() {
             return;
         }
 
-        if (formData.password.length < 12) {
-            setError('Your password must contain at least 12 characters.');
+        const passwordProblem = validatePassword(formData.password);
+
+        if (passwordProblem) {
+            setError(passwordProblem);
             return;
         }
 
@@ -165,6 +169,8 @@ export default function Register() {
                                 {showPassword ? 'Hide' : 'Show'}
                             </button>
                         </div>
+
+                        <PasswordHint password={formData.password}/>
                     </div>
 
                     <div className="auth-field">

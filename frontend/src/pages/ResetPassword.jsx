@@ -1,5 +1,7 @@
 import {useState} from 'react';
 import {Link, useNavigate, useSearchParams} from 'react-router-dom';
+import PasswordHint from '../components/PasswordHint';
+import {validatePassword} from '../utils/password';
 import '../styles/Auth.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
@@ -42,8 +44,10 @@ export default function ResetPassword() {
             return;
         }
 
-        if (formData.newPassword.length < 12 || formData.newPassword.length > 72) {
-            setError('Your password must contain between 12 and 72 characters.');
+        const passwordProblem = validatePassword(formData.newPassword);
+
+        if (passwordProblem) {
+            setError(passwordProblem);
             return;
         }
 
@@ -163,6 +167,8 @@ export default function ResetPassword() {
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
+
+                            <PasswordHint password={formData.newPassword}/>
                         </div>
 
                         <div className="auth-field">
