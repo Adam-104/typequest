@@ -646,3 +646,23 @@
     font-size: 0.78rem;
     color: var(--ink-soft);
 }
+
+.rotate-now {
+    margin-top: 6px;
+    width: 100%;
+    padding: 12px 16px;
+    font: inherit;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--primary, #b5301f);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.rotate-now + .rotate-continue {
+    margin-top: 8px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--ink-faint);
+}

@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import RotateButton from '../components/RotateButton';
 import {Link, Navigate, useNavigate, useParams} from 'react-router-dom';
 
 import Keyboard from '../components/Keyboard';
@@ -180,6 +181,7 @@ function Lesson({lesson}) {
                 </h1>
 
                 <div className="kc-topbar-right">
+                    <RotateButton/>
                     {stage === 'drill' && (
                         <button
                             type="button"

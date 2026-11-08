@@ -79,7 +79,7 @@ progress, earn XP and join the leaderboard.
 - **Settings**: Light / Dark / System theme, sound and volume, change password, change email (confirmed by
   email), resend confirmation, delete account.
 - **Polish**: each page sets its own browser tab title, unknown addresses show a friendly 404 page, shared links show a preview card (Open Graph/Twitter tags and `public/og-image.png`), and Register/Reset show a live password hint (length, bytes, strength meter).
-- **Rotate prompt**: on a phone or small tablet held upright, a dismissible card (`RotatePrompt`) suggests landscape before typing in lessons, Practice and games. It never blocks ("Stay in portrait"), hides itself when the phone's own keyboard opens or a hardware key is pressed, and landscape phones get a compact layout (`paper-play.css`).
+- **Rotate prompt**: on a phone or small tablet held upright, a dismissible card (`RotatePrompt`) suggests landscape before typing in lessons, Practice and games. It never blocks ("Stay in portrait"), hides itself when the phone's own keyboard opens or a hardware key is pressed, and a **↻ Rotate** button (`RotateButton`) sits in the top bar of every lesson, Practice and game screen ("Rotate for me" uses fullscreen + orientation lock where the browser allows it, otherwise it re-opens the card; "↩ Exit landscape" brings you back), and landscape phones get a compact layout (`paper-play.css`). On phones the paper's red margin line moves to the edge (`--paper-margin`) so text never touches it.
 - **On phones**: a labelled bottom tab bar (Home, Learn, Games, Practice, Menu) and a Menu sheet with the
   account and Log out.
 
@@ -458,7 +458,7 @@ Delete) · `LegalPage` (privacy and terms) · `admin/AdminOverview`, `AdminUsers
 `ConfirmDialog` (the paper "are you sure?" card: Esc, click-outside, focus trap) · `Keyboard` (on-screen
 keyboard with finger colours and the next key highlighted) · `PageHeader`, `PageStates` (loading / error /
 empty), `StatCard`, `RewardBanner` (XP earned, level up, new achievements, or the "this one isn't saved"
-notice for visitors), `VerifyBanner` (unconfirmed email nudge), `PasswordHint` (live rules and strength meter), `ProgressChart` (plain SVG line chart, no library), `TitleManager` (sets `document.title` on every route change), `RotatePrompt` (rotate-your-phone card on typing screens), `ErrorBoundary` (a crash shows a card, not a
+notice for visitors), `VerifyBanner` (unconfirmed email nudge), `PasswordHint` (live rules and strength meter), `ProgressChart` (plain SVG line chart, no library), `TitleManager` (sets `document.title` on every route change), `RotatePrompt` (rotate-your-phone card on typing screens), `RotateButton` (always-visible rotate / exit-landscape button; helpers in `utils/orientation.js`), `ErrorBoundary` (a crash shows a card, not a
 blank page, and is reported), `AdminShell` + `AdminTabs`.
 `components/games/*` are tiny wrappers that give each game its configuration; `components/arcade/` holds the
 real game screens (next section).

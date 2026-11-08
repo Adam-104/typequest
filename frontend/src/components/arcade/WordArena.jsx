@@ -8,6 +8,7 @@ import '../../styles/keycap.css';
 import '../../styles/arcade.css';
 import '../../styles/paper-play.css';
 import SoundToggle from './SoundToggle';
+import RotateButton from '../RotateButton';
 
 function Keys({text, typed = 0}) {
     return text.split('').map((letter, index) => (
@@ -140,6 +141,7 @@ export default function WordArena({config}) {
                 <h1 className="kc-title">{config.title}</h1>
 
                 <div className="kc-topbar-right">
+                    <RotateButton/>
                     <span className="kc-best">
                         Best <strong>{best}</strong>
                     </span>

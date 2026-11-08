@@ -117,7 +117,7 @@
     border: 1px solid var(--rule-strong);
     border-radius: 3px;
     background:
-        linear-gradient(90deg, transparent 46px, var(--margin-line) 46px 48px, transparent 48px),
+        linear-gradient(90deg, transparent var(--paper-margin, 46px), var(--margin-line) var(--paper-margin, 46px) calc(var(--paper-margin, 46px) + 2px), transparent calc(var(--paper-margin, 46px) + 2px)),
         repeating-linear-gradient(180deg, transparent 0 31px, var(--line-blue) 31px 32px),
         var(--sheet);
     box-shadow: 0 22px 30px -26px rgba(var(--shadow-rgb), 0.8);
@@ -285,7 +285,7 @@
 
 .kc--survival .kc-field {
     background:
-        linear-gradient(90deg, transparent 46px, var(--margin-line) 46px 48px, transparent 48px),
+        linear-gradient(90deg, transparent var(--paper-margin, 46px), var(--margin-line) var(--paper-margin, 46px) calc(var(--paper-margin, 46px) + 2px), transparent calc(var(--paper-margin, 46px) + 2px)),
         repeating-linear-gradient(180deg, transparent 0 31px, rgba(var(--ink-rgb), 0.1) 31px 32px),
         var(--sheet);
 }
@@ -469,4 +469,27 @@
     .ln-tip, .ln-best { padding: 0.4rem 0.7rem; }
     .ln-fingers { display: none; }
     .ln-intro-side h3 { margin: 0 0 0.3rem; font-size: 0.9rem; }
+}
+
+/* Phones: the red margin line sat 46 px in, which cut through the first letters of the
+   text on a 390 px screen. Move it close to the edge and start the text clear of it. */
+@media (max-width: 640px) {
+    .kc--paper {
+        --paper-margin: 14px;
+    }
+
+    .kc--paper .pr-field,
+    .kc--paper .kc-field--passage {
+        padding-left: calc(var(--paper-margin) + 16px);
+        padding-right: 14px;
+    }
+
+    .kc--paper .kc-passage {
+        overflow-wrap: anywhere;
+    }
+}
+
+/* The Rotate button in the top bar */
+.rotate-btn {
+    white-space: nowrap;
 }

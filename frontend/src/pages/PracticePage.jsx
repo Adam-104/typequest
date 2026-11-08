@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import RotateButton from '../components/RotateButton';
 import {useNavigate} from 'react-router-dom';
 
 import Keyboard from '../components/Keyboard';
@@ -134,6 +135,7 @@ export default function PracticePage() {
                 <h1 className="kc-title">Practice</h1>
 
                 <div className="kc-topbar-right">
+                    <RotateButton/>
                     <span className="kc-best">No XP here. Just reps.</span>
                     <button
                         type="button"

@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
+import {SHOW_ROTATE_EVENT, canRotateForUser, isSmallTouchScreen, rotateToLandscape} from '../utils/orientation';
 
 const DISMISS_KEY = 'typequest_rotate_dismissed';
 
@@ -22,17 +23,6 @@ function saveFlag() {
     }
 }
 
-// Phones and small tablets: any touch screen that is small, either by its real size
-// (short side under 820 px) or by the page width the browser reports (under 1025 px,
-// which also covers Chrome's "Desktop site" mode on a phone).
-function isSmallTouchScreen() {
-    if (typeof window === 'undefined' || !window.matchMedia) return false;
-    const touch = window.matchMedia('(any-pointer: coarse)').matches || navigator.maxTouchPoints > 0;
-    if (!touch) return false;
-    const shortSide = Math.min(window.screen.width, window.screen.height);
-    return shortSide <= 820 || window.innerWidth <= 1024;
-}
-
 // A hardware keyboard sends real key codes; phone soft keyboards usually send
 // "Unidentified" or keyCode 229. Only a hint, so it only ever HIDES the card.
 function looksLikeHardwareKey(event) {
@@ -45,6 +35,7 @@ export default function RotatePrompt() {
     const [portrait, setPortrait] = useState(false);
     const [dismissed, setDismissed] = useState(readFlag);
     const [small] = useState(isSmallTouchScreen);
+    const [reopened, setReopened] = useState(false);
 
     useEffect(() => {
         if (!small) return undefined;
@@ -67,6 +58,17 @@ export default function RotatePrompt() {
         return () => window.removeEventListener('keydown', onKey);
     }, [small, dismissed]);
 
+    // The Rotate button in the top bar asks for the card again, even after "Stay in portrait".
+    useEffect(() => {
+        if (!small) return undefined;
+
+        const open = () => setReopened(true);
+
+        window.addEventListener(SHOW_ROTATE_EVENT, open);
+
+        return () => window.removeEventListener(SHOW_ROTATE_EVENT, open);
+    }, [small]);
+
     // The phone's own keyboard opening shrinks the visible height a lot: that player is
     // typing on the screen, so portrait is the right choice and we stop asking.
     useEffect(() => {
@@ -82,11 +84,18 @@ export default function RotatePrompt() {
         return () => viewport.removeEventListener('resize', onResize);
     }, [small, dismissed]);
 
-    if (!small || dismissed || !portrait || !TYPING_ROUTE.test(pathname)) return null;
+    const visible = reopened || !dismissed;
+
+    if (!small || !visible || !portrait || !TYPING_ROUTE.test(pathname)) return null;
 
     const dismiss = () => {
         saveFlag();
         setDismissed(true);
+        setReopened(false);
+    };
+
+    const rotateForMe = async () => {
+        if (await rotateToLandscape()) dismiss();
     };
 
     return (
@@ -105,6 +114,9 @@ export default function RotatePrompt() {
                 <h2 id="rotate-title">Using an external keyboard? Rotate your phone</h2>
                 <p>With an external keyboard connected, landscape gives you a wider text area and a bigger on-screen key guide.</p>
                 <p className="rotate-note">Typing on the phone's own keyboard? Stay in portrait. For real touch typing, connect an external keyboard (Bluetooth, USB or wireless).</p>
+                {canRotateForUser() && (
+                    <button type="button" className="rotate-now" onClick={rotateForMe}>Rotate for me</button>
+                )}
                 <button type="button" className="rotate-continue" onClick={dismiss}>Stay in portrait</button>
             </div>
         </div>

@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import useGameSubmission from '../../hooks/useGameSubmission';
 import useSound from '../../hooks/useSound';
 import SoundToggle from './SoundToggle';
+import RotateButton from '../RotateButton';
 import RewardBanner from '../RewardBanner';
 import '../../styles/keycap.css';
 import '../../styles/arcade.css';
@@ -282,6 +283,7 @@ export default function PassageArena({config}) {
                 <h1 className="kc-title">{config.title}</h1>
 
                 <div className="kc-topbar-right">
+                    <RotateButton/>
                     <span className="kc-best">
                         Best <strong>{best}</strong> WPM
                     </span>
