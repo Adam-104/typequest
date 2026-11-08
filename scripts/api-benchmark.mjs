@@ -70,13 +70,14 @@ for (let i = 0; i < 3; i += 1) {
     const response = await fetch(`${API}/api/auth/login`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password}),
+        body: JSON.stringify({email: email.trim().toLowerCase(), password}),
     }).catch(() => null);
 
     logins.push({ms: now() - start, status: response?.status ?? 0, bytes: 0});
 
     if (response?.ok && !token) {
-        token = (await response.json()).accessToken;
+        const body = await response.json();
+        token = body.accessToken ?? body.token ?? '';  // the API names it "token"
     }
 }
 

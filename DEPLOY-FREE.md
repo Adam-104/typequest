@@ -101,3 +101,21 @@ database as version 1 without changing it. Once the app has started successfully
 If validate ever refuses to start, the log names the column that differs from the code.
 
 **Never share a database URI or password.** If one appears in a log or a chat, reset it in Aiven.
+
+## Moving the API to another region (Singapore)
+
+Why: the Aiven database is in Bangalore (DigitalOcean, `blr`). An API in Oregon pays about a quarter of a second for every database round trip, so a simple page took over 2 seconds in the first benchmark. Singapore is the closest Render region to Bangalore. Render cannot move an existing service, so you create a second one and switch over. Do not change `region` in `render.yaml` for the existing service.
+
+1. Render: **New +**, **Web Service**, pick `Adam-104/typequest`. Name `typequest-api-sg`, **Region: Singapore**, Runtime **Docker**, Instance type **Free**, Health Check Path `/actuator/health`.
+2. **Environment**: copy every variable from the old `typequest-api` service (same names, same values). Keep the same `TYPEQUEST_JWT_SECRET` so signed-in players stay signed in. Set `JPA_DDL_AUTO` to `validate`. Optionally add these to the end of `DB_URL`, joined with `&`:
+   `cacheServerConfiguration=true&elideSetAutoCommits=true&useLocalSessionState=true&alwaysSendSetIsolation=false&readOnlyPropagatesToServer=false&useLocalTransactionState=true`
+3. Wait for the deploy, then open `https://<new-address>/actuator/health`. It should say `UP`.
+4. Measure it before switching:
+   `node scripts/api-benchmark.mjs https://<new-address> you@example.com YourPassword`
+   Compare with the Oregon numbers. `/api/lessons` should be much faster.
+5. Switch the frontend: in Vercel set `VITE_API_BASE_URL` to the new address (no slash at the end), then **Redeploy** (the value is baked in at build time). `TYPEQUEST_CORS_ALLOWED_ORIGINS`, `PASSWORD_RESET_BASE_URL` and `EMAIL_VERIFICATION_BASE_URL` point at the website, so they do not change.
+6. Point the UptimeRobot monitor at the new `/actuator/health`.
+7. When the site works on the new API, suspend or delete the old `typequest-api` service.
+
+Free hours: Render gives the free plan about 750 instance hours a month for the whole workspace. Two services kept awake at the same time would use them twice as fast, so do not ping both. Suspend the old one soon after the switch.
+

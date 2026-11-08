@@ -11,7 +11,7 @@ progress.
 |---|---|
 | Backend (`src/`) | Java 25, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA / Hibernate, Flyway migrations, MySQL, Brevo (HTTP API or SMTP) |
 | Frontend (`frontend/`) | React 19, React Router 7, Vite 8, plain CSS (no UI library) |
-| Tests | JUnit 5, Mockito, Spring Boot Test (109 backend tests) |
+| Tests | JUnit 5, Mockito, Spring Boot Test (110 backend tests) |
 | Ops | Docker, docker compose, GitHub Actions CI, Render + Vercel + Aiven (free hosting guide) |
 
 ---
@@ -618,7 +618,7 @@ refused afterwards, and their existing access token stops working when it expire
 
 ## 11. Testing and CI
 
-`./mvnw test` runs 109 tests, including:
+`./mvnw test` runs 110 tests, including:
 
 | Area | Examples |
 |---|---|
@@ -699,5 +699,10 @@ notice stays with it.
 
 - `scripts/api-benchmark.mjs` measures the live API (cold start, login, p50/p95 per endpoint, ten users at once):
   `node scripts/api-benchmark.mjs https://typequest-api.onrender.com you@example.com YourPassword`
+  (use a normal player account; the API returns the login token as `token`, and the script reads both names).
+- First benchmark (free Render plan, database on Aiven): health check about 0.7 s, `/api/lessons` about 2.2 s, login about 2.2 s, ten simultaneous users about 2 requests/sec. Two simple reads costing about 1.4 s more than the health check points at database round-trip latency, and the regions confirmed it: the API ran in Render's Oregon region while the Aiven database is in Bangalore. The fix is to run the API in Render's Singapore region (see "Moving the API to another region" in [DEPLOY-FREE.md](DEPLOY-FREE.md)) and to add the MySQL driver options below.
+- After moving the API to Render's Singapore region (next to the Bangalore database): health check about 0.15 s, `/api/lessons` about 0.4 s, leaderboard about 0.16 s, other signed-in reads about 0.3 to 0.4 s, and 20 to 30 requests/sec with ten users at once, with no failures. A read that runs inside a `@Transactional(readOnly = true)` method costs about 0.16 s more than a single query without one (extra begin/commit round trips to the database), which the MySQL driver options below reduce. Adding `useLocalTransactionState=true` (it stops the driver sending a separate `COMMIT` after every read) cut those reads by about 70 to 95 ms each: lesson-progress count 320 to 237 ms, `/api/users/me` 403 to 309 ms, achievements 319 to 233 ms, history 310 to 240 ms, lessons 401 to 319 ms, leaderboard 160 to 113 ms.
+- The login rate limit works as designed: a third login within a short time from the same address returns 429.
+- Optional `DB_URL` options that cut the number of statements the MySQL driver sends per request (add to the end of the Aiven URL on Render): `cacheServerConfiguration=true&elideSetAutoCommits=true&useLocalSessionState=true&alwaysSendSetIsolation=false&readOnlyPropagatesToServer=false&useLocalTransactionState=true`.
 - `V3__performance_indexes.sql` adds indexes for the leaderboard (`users`), the per-player history and chart, and the admin games list (`game_results`).
 - The biggest delay is the free Render plan sleeping after about 15 minutes idle; an UptimeRobot ping on `/actuator/health` keeps it awake.
