@@ -16,6 +16,7 @@ export default function Login() {
     });
 
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(true);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const slow = useSlowHint(loading);
@@ -105,7 +106,7 @@ export default function Login() {
 
         try {
             setLoading(true);
-            await login(formData);
+            await login({...formData, rememberMe});
             navigate('/', {replace: true});
         } catch (err) {
             setError(err.message || 'Unable to log in. Please try again.');
@@ -206,6 +207,18 @@ export default function Login() {
                             {resetMessage}
                         </div>
                     )}
+
+                    <label className="auth-remember">
+                        <input
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(event) => setRememberMe(event.target.checked)}
+                        />
+                        <span>
+                            Keep me signed in on this device
+                            <small>Untick this on a shared or public computer.</small>
+                        </span>
+                    </label>
 
                     <div className="auth-form-options">
                         <span>Secure sign-in</span>

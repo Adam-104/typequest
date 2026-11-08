@@ -10,10 +10,15 @@ import {
 
 import {authService} from '../services/authService';
 import {apiRequest} from '../services/api';
+import {tokenStore} from '../utils/tokenStore';
 
 const AuthContext = createContext(null);
 
-const REFRESH_TOKEN_KEY = 'typequest_refresh_token';
+// After a failed refresh we only sign the user out when the server REJECTED the token.
+// A sleeping or unreachable server (Render's free plan sleeps) must not sign anyone out.
+const TOKEN_REJECTED = new Set([400, 401, 403]);
+const RESTORE_RETRY_DELAYS_MS = [2000, 5000, 10000, 20000];
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // The access token carries the user's roles. This is only used to decide what
 // to show: the server checks the role again on every admin request.
@@ -59,12 +64,12 @@ export function AuthProvider({children}) {
         setAccessToken(null);
         accessTokenRef.current = null;
 
-        sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+        tokenStore.clear();
 
 
     }, []);
 
-    const saveSession = useCallback((response) => {
+    const saveSession = useCallback((response, remember) => {
         if (!response?.accessToken || !response?.refreshToken) {
             throw new Error(
                 'The server did not return valid authentication tokens.',
@@ -82,12 +87,9 @@ export function AuthProvider({children}) {
         setAccessToken(response.accessToken);
         accessTokenRef.current = response.accessToken;
 
-// Temporary storage strategy for the current backend contract.
-// An HttpOnly cookie is preferable for production refresh tokens.
-        sessionStorage.setItem(
-            REFRESH_TOKEN_KEY,
-            response.refreshToken,
-        );
+// localStorage when the user ticked "Keep me signed in", otherwise sessionStorage.
+// An HttpOnly cookie would be safer against XSS (see the ideas-for-later list).
+        tokenStore.set(response.refreshToken, remember);
 
 
     }, []);
@@ -102,9 +104,10 @@ export function AuthProvider({children}) {
             sessionVersionRef.current += 1;
 
 
-            const response = await authService.login(credentials);
+            const {rememberMe, ...loginBody} = credentials;
+            const response = await authService.login(loginBody);
 
-            saveSession(response);
+            saveSession(response, Boolean(rememberMe));
 
             return response;
         },
@@ -119,7 +122,7 @@ export function AuthProvider({children}) {
         }
 
 
-        const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY);
+        const refreshToken = tokenStore.get();
 
         if (!refreshToken) {
             clearSession();
@@ -142,7 +145,9 @@ export function AuthProvider({children}) {
 
                 return true;
             } catch (error) {
-                if (operationVersion === sessionVersionRef.current) {
+                // Only a rejected token ends the session. A network error, a timeout
+                // or a 5xx (server still waking up) keeps the token for a retry.
+                if (operationVersion === sessionVersionRef.current && TOKEN_REJECTED.has(error.status)) {
                     clearSession();
                 }
 
@@ -204,7 +209,7 @@ export function AuthProvider({children}) {
 
 
         const currentAccessToken = accessToken;
-        const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY);
+        const refreshToken = tokenStore.get();
 
 // Immediately invalidate local authentication.
         clearSession();
@@ -232,11 +237,20 @@ export function AuthProvider({children}) {
 
         async function restoreSession() {
             try {
-                if (!sessionStorage.getItem(REFRESH_TOKEN_KEY)) {
-                    return;
-                }
+                // Retry while the server wakes up instead of signing the user out.
+                for (let attempt = 0; attempt <= RESTORE_RETRY_DELAYS_MS.length; attempt += 1) {
+                    if (!tokenStore.get() || cancelled) {
+                        return;
+                    }
 
-                await refreshSession();
+                    if (await refreshSession()) {
+                        return;
+                    }
+
+                    if (attempt < RESTORE_RETRY_DELAYS_MS.length) {
+                        await wait(RESTORE_RETRY_DELAYS_MS[attempt]);
+                    }
+                }
             } finally {
                 if (!cancelled) {
                     setLoading(false);
@@ -253,10 +267,24 @@ export function AuthProvider({children}) {
 
     }, [refreshSession]);
 
+    // Coming back to the tab: if a saved login could not be restored earlier (for example
+    // the server was asleep), try once more.
+    useEffect(() => {
+        const onVisible = () => {
+            if (document.visibilityState === 'visible' && !accessTokenRef.current && tokenStore.get()) {
+                refreshSession();
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisible);
+
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [refreshSession]);
+
     // The refresh token identifies this device's session (the server keeps it
     // signed in when the password changes and signs the other devices out).
     const getRefreshToken = useCallback(
-        () => sessionStorage.getItem(REFRESH_TOKEN_KEY) || '',
+        () => tokenStore.get(),
         [],
     );
 

@@ -22,12 +22,15 @@ function saveFlag() {
     }
 }
 
-// Phones and small tablets: a touch screen whose short side is under 820 px.
+// Phones and small tablets: any touch screen that is small, either by its real size
+// (short side under 820 px) or by the page width the browser reports (under 1025 px,
+// which also covers Chrome's "Desktop site" mode on a phone).
 function isSmallTouchScreen() {
     if (typeof window === 'undefined' || !window.matchMedia) return false;
-    const touch = window.matchMedia('(pointer: coarse)').matches;
+    const touch = window.matchMedia('(any-pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+    if (!touch) return false;
     const shortSide = Math.min(window.screen.width, window.screen.height);
-    return touch && shortSide <= 820;
+    return shortSide <= 820 || window.innerWidth <= 1024;
 }
 
 // A hardware keyboard sends real key codes; phone soft keyboards usually send

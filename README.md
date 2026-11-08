@@ -436,7 +436,7 @@ The server decides what is allowed on every request; the guards only decide what
 - `services/authService.js`, `gameService.js`, `lessonProgressService.js`, `accountService.js`,
   `adminService.js` – one small function per endpoint.
 - `context/AuthContext.jsx` – the session. Keeps the access token **in memory** and the refresh token in
-  `sessionStorage` (`typequest_refresh_token`), so a reload keeps you signed in but closing the tab or browser signs you out. On load it tries to refresh the session. `authRequest(endpoint)`
+  `localStorage` when "Keep me signed in on this device" is ticked (the default) or `sessionStorage` when it is not (`utils/tokenStore.js`, key `typequest_refresh_token`), so a ticked login survives closing the browser and an unticked one ends with the tab. On load it tries to refresh the session and retries while a sleeping server wakes up; only a token the server rejects (400/401/403) signs the user out. `authRequest(endpoint)`
   adds the token, and on HTTP 401 refreshes once (sharing one refresh among concurrent calls, because refresh
   tokens rotate) and retries. Logout and a version counter make sure an old request can never bring back a
   cleared session. Exposes `user`, `isAuthenticated`, `isAdmin` (roles read from the token for display only),
@@ -553,7 +553,7 @@ sequenceDiagram
     U->>A: POST /auth/verify-email (token from the link)
     U->>A: POST /auth/login
     A-->>U: access token (15 min) + refresh token (7 days)
-    Note over U: access token kept in memory,<br/>refresh token in sessionStorage
+    Note over U: access token kept in memory,<br/>refresh token in localStorage or sessionStorage
     U->>A: any request + Bearer token
     A-->>U: 401 when the access token expired
     U->>A: POST /auth/refresh
@@ -694,3 +694,10 @@ Found a bug or have an idea? Open an issue on the
 
 Released under the [MIT License](LICENSE). You may use, copy and change the code, as long as the licence
 notice stays with it.
+
+## Performance
+
+- `scripts/api-benchmark.mjs` measures the live API (cold start, login, p50/p95 per endpoint, ten users at once):
+  `node scripts/api-benchmark.mjs https://typequest-api.onrender.com you@example.com YourPassword`
+- `V3__performance_indexes.sql` adds indexes for the leaderboard (`users`), the per-player history and chart, and the admin games list (`game_results`).
+- The biggest delay is the free Render plan sleeping after about 15 minutes idle; an UptimeRobot ping on `/actuator/health` keeps it awake.
